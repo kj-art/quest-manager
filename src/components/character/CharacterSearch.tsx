@@ -19,8 +19,6 @@ export const CharacterSearch = React.memo(() =>
     setSearchTerm('');
   }, [setSearchTerm]);
 
-  console.log('Rendering CharacterSearch'); // Debug log
-
   return (
     <div className="form-field with-button">
       <FormField

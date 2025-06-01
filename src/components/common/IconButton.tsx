@@ -1,5 +1,6 @@
 import React from 'react';
-import { getIcon } from '../../utils/iconLoader';
+import { getIcon } from '../../CharacterManager';
+import '/src/components/common/IconButton.css';
 
 interface IconButtonProps
 {

@@ -176,11 +176,9 @@ export function CharacterManager()
             </li>
             {characters.filter((char) =>
             {
-              console.log('Name:', char.name, 'Tags:', char.tags);
               const inName = char.name.toLowerCase().includes(searchTerm.toLowerCase());
               const inTags = Array.isArray(char.tags) &&
                 char.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-              console.log('→', inName, inTags);
               return inName || inTags;
             })
               .map((char) => (
