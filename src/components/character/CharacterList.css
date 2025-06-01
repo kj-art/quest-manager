@@ -1,0 +1,39 @@
+/* Character list styles */
+.character-row {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #cccccc28;
+}
+
+.character-header {
+  border-bottom: 1px solid #cccccc;
+}
+
+.character-col {
+  padding-right: 1rem;
+}
+
+.character-col.name {
+  width: 200px;
+}
+
+.character-col.hp {
+  display: flex;
+  width: 150px;
+  align-items: center;
+  gap: 0.5rem; /* adds space between the button and input/text */
+}
+
+.character-col.hp input {
+  font-family: 'Pixellari', monospace;
+}
+
+.character-col.tags {
+  flex: 1;
+  min-width: 200px;
+}
+
+.character-col.buttons button {
+  margin-right: 0.5rem;
+} 

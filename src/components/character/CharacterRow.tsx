@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import type { Character } from '../../types/Character';
 import { IconButton } from '../common/IconButton';
 import { useCharacters } from '../../contexts/CharacterContext';
+import './CharacterList.css';
 
 interface CharacterRowProps
 {
@@ -39,8 +40,6 @@ export const CharacterRow = React.memo<CharacterRowProps>(({ character }) =>
   {
     deleteCharacter(character.id);
   }, [character.id, deleteCharacter]);
-
-  console.log(`Rendering CharacterRow for ${character.name}`); // Debug log
 
   return (
     <li className="character-row">

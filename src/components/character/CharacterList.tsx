@@ -4,6 +4,7 @@ import { CharacterHeader } from './CharacterHeader';
 import { CharacterRow } from './CharacterRow';
 import { CharacterSearch } from './CharacterSearch';
 import { useCharacters } from '../../contexts/CharacterContext';
+import './CharacterList.css';
 
 export const CharacterList: React.FC = () =>
 {
@@ -14,7 +15,6 @@ export const CharacterList: React.FC = () =>
   // Only recalculates when characters or searchTerm change
   const filteredCharacters = useMemo(() =>
   {
-    console.log('Filtering characters...'); // Debug log to see when this runs
     return characters.filter((char) =>
     {
       const inName = char.name.toLowerCase().includes(searchTerm.toLowerCase());

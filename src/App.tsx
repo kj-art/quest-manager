@@ -4,7 +4,7 @@ import './App.css';
 import React from 'react';
 
 // The central map of slug -> component
-const pageComponents: Record<string, JSX.Element> = {
+const pageComponents: Record<string, React.ReactNode> = {
   'character-manager': <CharacterManager />,
   'script-writer': <div>Script Writer</div>,
   //'locations': <div>Locations</div>,                  // is this needed? the Enterprise script will be less obnoxious when you can view one chapter at a time
@@ -20,7 +20,7 @@ const formatDisplayName = (slug: string) =>
     .replace(/-/g, ' ')
     .replace(/\b\w/g, (char) => char.toUpperCase());
 
-function ImageBanner({ slug, zIndex, index, hoveredIndex, setHoveredIndex }: { slug: string; zIndex: number, index: number, hoveredIndex: number, setHoveredIndex: React.Dispatch<React.SetStateAction<number | null>> })
+function ImageBanner({ slug, zIndex, index, hoveredIndex, setHoveredIndex }: { slug: string; zIndex: number, index: number, hoveredIndex: number | null, setHoveredIndex: React.Dispatch<React.SetStateAction<number | null>> })
 {
   const [hovered, setHovered] = React.useState(false);
   const target = formatDisplayName(slug);
@@ -109,7 +109,7 @@ function HeadingText({ slug, headingText }: { slug: string; headingText: String 
 // Main splash page
 function Main()
 {
-  const [hoveredIndex, setHoveredIndex] = React.useState(null);
+  const [hoveredIndex, setHoveredIndex] = React.useState<number | null>(null);
 
   return (
     <div>

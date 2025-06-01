@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { IconButton } from '../common/IconButton';
 import { useCharacters } from '../../contexts/CharacterContext';
 import { useSettings } from '../../contexts/SettingsContext';
+import './CharacterList.css';
 
 // Wrap with React.memo since this component doesn't need to re-render
 // when parent components change - only when context values change
@@ -27,8 +28,6 @@ export const CharacterHeader = React.memo(() =>
   {
     toggleSettingsForm(true);
   }, [toggleSettingsForm]);
-
-  console.log('Rendering CharacterHeader'); // Debug log
 
   return (
     <li className="character-row character-header">
