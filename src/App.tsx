@@ -3,6 +3,9 @@ import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import './App.css';
 import './components/header/Header.css';
 import React from 'react';
+import { Splash } from './components/splash/Splash';
+import { CharacterProvider } from './contexts/CharacterContext';
+import { SettingsProvider } from './contexts/SettingsContext';
 
 // The central map of slug -> component
 const pageComponents: Record<string, React.ReactNode> = {
@@ -165,14 +168,16 @@ function Header()
 export default function App()
 {
   return (
-    <>
-      <Header />
-      <Routes>
-        <Route path="/" element={<Main />} />
-        {Object.entries(pageComponents).map(([slug, component]) => (
-          <Route key={slug} path={`/${slug}`} element={component} />
-        ))}
-      </Routes>
-    </>
+    <SettingsProvider>
+      <CharacterProvider>
+        <Header />
+        <Routes>
+          <Route path="/" element={<Splash pageComponents={pageComponents} />} />
+          {Object.entries(pageComponents).map(([slug, component]) => (
+            <Route key={slug} path={`/${slug}`} element={component} />
+          ))}
+        </Routes>
+      </CharacterProvider>
+    </SettingsProvider>
   );
 }

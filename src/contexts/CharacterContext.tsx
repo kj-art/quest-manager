@@ -29,14 +29,18 @@ const initialState: CharacterState = {
 
 function characterReducer(state: CharacterState, action: CharacterAction): CharacterState
 {
+  console.log('CharacterReducer:', { action, currentState: state });
+
   switch (action.type)
   {
     case 'SET_CHARACTERS':
+      const newCharacters = typeof action.payload === 'function'
+        ? action.payload(state.characters)
+        : action.payload;
+      console.log('Setting characters:', newCharacters);
       return {
         ...state,
-        characters: typeof action.payload === 'function'
-          ? action.payload(state.characters)
-          : action.payload,
+        characters: newCharacters,
       };
 
     case 'ADD_CHARACTER':
@@ -122,6 +126,7 @@ function CharacterProviderComponent({ children }: { children: React.ReactNode })
 
   const setCharacters = useCallback((characters: Character[] | ((prev: Character[]) => Character[])) =>
   {
+    console.log('Setting characters with:', characters);
     dispatch({ type: 'SET_CHARACTERS', payload: characters });
   }, []);
 
@@ -177,6 +182,8 @@ function CharacterProviderComponent({ children }: { children: React.ReactNode })
     updateCharacterAp,
     healCharacter,
   };
+
+  console.log('CharacterProvider state:', state);
 
   return (
     <CharacterContext.Provider value={value}>

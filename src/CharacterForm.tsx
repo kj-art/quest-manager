@@ -3,6 +3,8 @@ import type { Character, Stats, CharacterType } from './Character';
 import { STAT_NAMES, getTotalStatPoints, getAbilityUpgradeMax, getStatUpgradeMax, CHARACTER_TYPES } from './Character';
 import { FormField } from './components/FormField';
 import { FractionField } from './components/FractionField';
+import { useCharacters } from './contexts/CharacterContext';
+import { v4 as uuidv4 } from 'uuid';
 
 function defaultStats(): Stats
 {
@@ -45,7 +47,7 @@ interface Errors
 interface CharacterFormProps
 {
   character: Character | null;
-  onSave: (character: Character) => void;
+  onSave: () => void;
   onCancel: () => void;
 }
 
@@ -55,6 +57,7 @@ export function CharacterForm({ character, onSave, onCancel }: CharacterFormProp
   const [formCharacter, setFormCharacter] = useState<Character>(defaultCharacter);
   const [tagInput, setTagInput] = useState('');
   const [errors, setErrors] = useState<Errors>({});
+  const { addCharacter, updateCharacter } = useCharacters();
 
   // When character prop changes (edit or new), reset local form state
   useEffect(() =>
@@ -166,8 +169,18 @@ export function CharacterForm({ character, onSave, onCancel }: CharacterFormProp
       }
     }
 
-    // Proceed with submitting the form (e.g., saving character)
-    onSave(formCharacter);
+    // Save the character
+    if (formCharacter.id)
+    {
+      updateCharacter(formCharacter);
+    } else
+    {
+      const { id: _, ...characterWithoutId } = formCharacter;
+      addCharacter(characterWithoutId);
+    }
+
+    // Call onSave to close the form
+    onSave();
   }
 
   return (

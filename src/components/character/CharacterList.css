@@ -1,4 +1,20 @@
 /* Character list styles */
+.character-list-item {
+  display: flex;
+  justify-content: space-between; /* name left, buttons right */
+  align-items: center; /* vertically center items */
+  padding: 4px 0;
+}
+
+.character-name {
+  text-align: left;
+  flex-grow: 1; /* takes available space */
+}
+
+.character-buttons button {
+  margin-left: 8px; /* spacing between buttons */
+}
+
 .character-row {
   display: flex;
   align-items: center;
