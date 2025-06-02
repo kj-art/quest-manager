@@ -163,14 +163,13 @@ h2 {
   font-size: 1.8rem;
 }
 
-
-
 .nav-links {
   display: flex;
   align-items: center;
   gap: 0.5rem;
   color:var(--link-color);
 }
+
 .nav-links a:hover {
   color: var(--linkHover-color);
 }
@@ -190,12 +189,15 @@ h2 {
   color: inherit
 }
 
-
 .top-left-heading {
   text-align: left;
   padding: 0rem;
   gap: 0rem;
   margin: 0rem;
+}
+
+.top-left-heading h1 {
+  margin: 0;
 }
 
 .row {
@@ -206,10 +208,6 @@ h2 {
 .container, ul, li {
   margin: 0;
   padding: 0;
-}
-
-.top-left-heading h1 {
-  margin: 0;
 }
 
 /* Container for each character list item */
@@ -288,7 +286,6 @@ h2 {
   display: block;
 }
 
-
 .form-field {
   display: flex;
   align-items: center;
@@ -331,7 +328,7 @@ a:hover {
   color: var(--linkHover-color);
 }
 
-
+/* Generic button styles */
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -343,14 +340,17 @@ button {
   cursor: pointer;
   transition: border-color 0.25s;
 }
+
 button:hover {
   border-color: #646cff;
 }
+
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
+/* Light theme overrides */
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

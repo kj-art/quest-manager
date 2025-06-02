@@ -1,6 +1,7 @@
 import { CharacterManager } from './CharacterManager';
 import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import './App.css';
+import './components/header/Header.css';
 import React from 'react';
 
 // The central map of slug -> component

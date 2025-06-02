@@ -1,0 +1,32 @@
+.form-field {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.form-field label {
+  width: 150px;
+  margin-right: 1rem;
+  text-align: left;
+  font-weight: bold;
+}
+
+.form-field input,
+.form-field textarea,
+.form-field select {
+  font-family: 'Pixellari', monospace;
+  flex: 1;
+  padding: 0.4rem;
+  font-size: 1rem;
+}
+
+.fraction-input {
+  font-family: 'Pixellari', monospace;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.fraction-input input {
+  width: 4rem;
+} 

@@ -1,0 +1,41 @@
+.header-container {
+  display: flex;
+  align-items: flex-start;   /* top align */
+  justify-content: space-between; /* h1 left, nav right */
+  padding: 0rem;
+  gap: 0rem;
+  margin-bottom: 1rem;
+}
+
+.header-container h1 {
+  margin: 0;
+  padding: 0;
+  line-height: 1.1;
+  font-size: 1.8rem;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--link-color);
+}
+
+.nav-links a:hover {
+  color: var(--linkHover-color);
+}
+
+.nav-links span {
+  display: flex;
+  align-items: center;
+}
+
+.nav-links span:not(:first-child)::before {
+  content: "|";
+  margin-right: 0.5rem;
+  color: inherit;
+}
+
+.nav-links a {
+  color: inherit;
+} 
