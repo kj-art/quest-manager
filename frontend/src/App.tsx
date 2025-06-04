@@ -7,16 +7,39 @@ import { Splash } from './components/splash/Splash';
 import { CharacterProvider } from './contexts/CharacterContext';
 import { SettingsProvider } from './contexts/SettingsContext';
 
-// The central map of slug -> component
-const pageComponents: Record<string, React.ReactNode> = {
-  'character-manager': <CharacterManager />,
-  'script-writer': <div>Script Writer</div>,
-  //'locations': <div>Locations</div>,                  // is this needed? the Enterprise script will be less obnoxious when you can view one chapter at a time
-  'battle-balancer': <div>Battle Balancer</div>,
-  'minigame-designer': <div>Minigame Designer</div>,
-  'inventory': <div>Inventory</div>,
-  'abilities': <div>Abilities</div>,
-};
+interface PageInfo
+{
+  component: React.ComponentType;
+  title: string;
+}
+
+// The central map of component names and their paths
+const pages: Record<string, PageInfo> = {
+  'character-manager': {
+    component: CharacterManager,
+    title: 'Character Manager'
+  },
+  'script-writer': {
+    component: () => <div>Script Writer</div>,
+    title: 'Script Writer'
+  },
+  'battle-balancer': {
+    component: () => <div>Battle Balancer</div>,
+    title: 'Battle Balancer'
+  },
+  'minigame-designer': {
+    component: () => <div>Minigame Designer</div>,
+    title: 'Minigame Designer'
+  },
+  'inventory': {
+    component: () => <div>Inventory</div>,
+    title: 'Inventory'
+  },
+  'abilities': {
+    component: () => <div>Abilities</div>,
+    title: 'Abilities'
+  }
+} as const;
 
 // Utility to convert slug to display name
 const formatDisplayName = (slug: string) =>
@@ -110,35 +133,6 @@ function HeadingText({ slug, headingText }: { slug: string; headingText: String 
   );
 }
 
-// Main splash page
-function Main()
-{
-  const [hoveredIndex, setHoveredIndex] = React.useState<number | null>(null);
-
-  return (
-    <div>
-      <h1 className="title">Quest Manager</h1>
-      <h1 className="subtitle">Tales of Verdana</h1>
-      <div className="splash-container">
-        <img src="../src/assets/splash_main.png" className="splash-main" />
-
-        <div className="banner-list">
-          {Object.keys(pageComponents).map((slug, index) => (
-            <ImageBanner
-              key={slug}
-              slug={slug}
-              zIndex={index + 1}
-              index={index}
-              hoveredIndex={hoveredIndex}
-              setHoveredIndex={setHoveredIndex}
-            />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
 // Header with nav and current location
 function Header()
 {
@@ -154,9 +148,9 @@ function Header()
         <span>
           <Link to="/">Main</Link>
         </span>
-        {Object.keys(pageComponents).map((slug) => (
+        {Object.entries(pages).map(([slug, { title }]) => (
           <span key={slug}>
-            <Link to={`/${slug}`}>{formatDisplayName(slug)}</Link>
+            <Link to={`/${slug}`}>{title}</Link>
           </span>
         ))}
       </nav>
@@ -172,9 +166,9 @@ export default function App()
       <CharacterProvider>
         <Header />
         <Routes>
-          <Route path="/" element={<Splash pageComponents={pageComponents} />} />
-          {Object.entries(pageComponents).map(([slug, component]) => (
-            <Route key={slug} path={`/${slug}`} element={component} />
+          <Route path="/" element={<Splash pages={pages} />} />
+          {Object.entries(pages).map(([slug, { component: Component }]) => (
+            <Route key={slug} path={`/${slug}`} element={<Component />} />
           ))}
         </Routes>
       </CharacterProvider>

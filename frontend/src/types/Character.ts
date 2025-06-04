@@ -12,7 +12,11 @@ export type Stats = Record<Stat, number>;
 
 export interface Character {
   id: string;
-  name: string;
+  name: {
+    first: string;
+    nick?: string;
+    last: string;
+  };
   type: string;
   age: number;
   homePlanet: string;
@@ -20,7 +24,26 @@ export interface Character {
   totalHp: number;
   ap: number;
   attack: number;
-  stats: Stats;
+  stats: {
+    strength: number;
+    speed: number;
+    sway: number;
+    sneak: number;
+    intelligence: number;
+    perception: number;
+  };
+  ship: {
+    hp: number;
+    shields: number;
+    torpedoAmmo: number;
+    torpedoes: number;
+    stunAmmo: number;
+    stun: number;
+    targeting: number;
+    speed: number;
+    range: number;
+    firepower: number;
+  };
   backstory: string;
   abilityUpgradePoints: number;
   statUpgradePoints: number;

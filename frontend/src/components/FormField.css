@@ -22,11 +22,148 @@
 
 .fraction-input {
   font-family: 'Pixellari', monospace;
-  display: flex;
+  display: grid;
+  grid-template-columns: 4rem auto 3rem;
+  gap: 0.5rem;
   align-items: center;
-  gap: 0.25rem;
+  position: relative;
+  width: 140px; /* Fixed width for consistent alignment */
 }
 
 .fraction-input input {
-  width: 4rem;
+  width: 80%;
+  text-align: right;
+  padding: 0.4rem;
+}
+
+.fraction-input span {
+  text-align: center;
+  color: #666;
+}
+
+.fraction-input input.read-only {
+  background: none;
+  border: 2px dotted #666;
+  border-radius: 2px;
+  padding: 0.2rem 0.4rem;
+  color: #fff;
+  cursor: default;
+  -webkit-appearance: none;
+  -moz-appearance: textfield;
+  text-align: left;
+}
+
+.fraction-input input.read-only::-webkit-outer-spin-button,
+.fraction-input input.read-only::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Connecting line styles */
+.connecting-line {
+  position: absolute;
+  top: 50%;
+  left: 87%;
+  width: 83%;
+  height: 0;
+  border-top: 2px dotted #666;
+  transform: translateY(-50%);
+}
+
+/* Ship layout styles */
+.ship-layout {
+  display: flex;
+  gap: 3rem;
+  margin-top: 1rem;
+  position: relative;
+}
+
+.ship-column {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.ship-column.ship-status {
+  flex: 0 0 auto;
+  width: 450px;
+}
+
+.ship-column.ship-status .form-field {
+  position: relative;
+}
+
+.ship-column.ship-status .form-field label {
+  width: 200px;
+  white-space: nowrap;
+}
+
+.ship-column.ship-status .fraction-input {
+  flex: 0 0 auto;
+  position: relative;
+}
+
+.ship-column.ship-stats {
+  flex: 1;
+  margin-top: 0;
+}
+
+/* Ship stats grid layout */
+.ship-stats-grid {
+  display: flex;
+  gap: 2rem;
+}
+
+.ship-stats-col {
+  flex: 1;
+}
+
+.ship-stats-col .form-field {
+  margin-bottom: 1rem;
+}
+
+/* Ensure fields align vertically */
+.ship-column .form-field {
+  margin-bottom: 1rem;
+  min-height: 2.5rem; /* Consistent height for all fields */
+}
+
+.ship-column h4 {
+  color: #FFCC00;
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #666;
+  text-shadow: -2px 2px 0px rgba(0, 0, 0, 0.3);
+}
+
+/* Remove dotted lines since fields are now side by side */
+.ship-status .fraction-input::after {
+  display: none;
+}
+
+/* Position the status fields to line up with their corresponding stats */
+.ship-status .form-row:nth-child(1) { margin-top: 3.5rem; }  /* Lines up with Shields */
+.ship-status .form-row:nth-child(2) { margin-top: 2rem; }    /* Lines up with Torpedoes */
+.ship-status .form-row:nth-child(3) { margin-top: 2rem; }    /* Lines up with Stun */
+
+/* Create connecting lines */
+.ship-status .fraction-input {
+  position: relative;
+  padding-right: 2rem;
+}
+
+/* Add some spacing between form rows */
+.form-row {
+  margin-bottom: 1rem;
+}
+
+/* Make the ship section headings stand out */
+.ship-layout h4 {
+  margin-bottom: 1.5rem;
+  color: #FFCC00;
+  font-size: 1.2rem;
+  border-bottom: 2px solid #666;
+  padding-bottom: 0.5rem;
+  text-shadow: -2px 2px 0px rgba(0, 0, 0, 0.3);
 } 

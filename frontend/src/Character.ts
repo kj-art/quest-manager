@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import type { Stats, Stat } from './types/Character';
 
 let totalStatPoints: number = 1;
 let abilityUpgradeMax: number = 1;
@@ -50,13 +51,13 @@ export function isValidStatAllocation(character: Character): boolean {
 
 export const STAT_NAMES = ["strength", "speed", "sway", "sneak", "intelligence", "perception"] as const;
 
-export type Stat = typeof STAT_NAMES[number];
-
-export type Stats = Record<Stat, number>;
-
 export interface Character {
   id: string;
-  name: string;
+  name: {
+    first: string;
+    nick?: string;
+    last: string;
+  };
   type: string;
   age: number;
   homePlanet: string;
@@ -65,6 +66,18 @@ export interface Character {
   ap: number;
   attack: number;
   stats: Stats;
+  ship: {
+    hp: number;
+    shields: number;
+    torpedoAmmo: number;
+    torpedoes: number;
+    stunAmmo: number;
+    stun: number;
+    targeting: number;
+    speed: number;
+    range: number;
+    firepower: number;
+  };
   backstory: string;
   abilityUpgradePoints: number;
   statUpgradePoints: number;

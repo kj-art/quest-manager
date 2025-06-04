@@ -1,15 +1,18 @@
-import React from 'react';
+import React, { useRef } from 'react';
+
 
 interface FractionFieldProps
 {
   label: string;
   idStart: string;
   startValue: number;
-  onStartChange: (value: number) => void;
+  onStartChange: React.ChangeEventHandler<HTMLInputElement>;
   idEnd: string;
   endValue: number;
-  onEndChange: (value: number) => void;
+  onEndChange: React.ChangeEventHandler<HTMLInputElement>;
   min?: number;
+  endReadOnly?: boolean;
+  showConnectingLine?: boolean;
 }
 
 export function FractionField({
@@ -20,7 +23,9 @@ export function FractionField({
   idEnd,
   endValue,
   onEndChange,
-  min
+  min,
+  endReadOnly,
+  showConnectingLine
 }: FractionFieldProps)
 {
   return (
@@ -31,7 +36,7 @@ export function FractionField({
           id={idStart}
           type="number"
           value={startValue}
-          onChange={e => onStartChange(Number(e.target.value))}
+          onChange={onStartChange}
           min={min}
           max={endValue}
         />
@@ -40,9 +45,12 @@ export function FractionField({
           id={idEnd}
           type="number"
           value={endValue}
-          onChange={e => onEndChange(Number(e.target.value))}
+          onChange={onEndChange}
           min={min}
+          readOnly={endReadOnly === true}
+          className={endReadOnly === true ? 'read-only' : ''}
         />
+        {showConnectingLine && <div className="connecting-line" />}
       </div>
     </div>
   );

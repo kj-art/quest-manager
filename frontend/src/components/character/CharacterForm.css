@@ -1,0 +1,99 @@
+.form-section {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  border: 1px solid #cccccc28;
+  border-radius: 4px;
+}
+
+.form-section h3 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #ccc;
+}
+
+.form-row {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.form-row > * {
+  flex: 1;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+.form-buttons button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.form-buttons button[type="submit"] {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.form-buttons button[type="button"] {
+  background-color: #f44336;
+  color: white;
+}
+
+.form-buttons button:hover {
+  opacity: 0.9;
+}
+
+.ship-layout {
+  display: flex;
+  gap: 4rem;
+  position: relative;
+  margin-top: 1rem;
+}
+
+.ship-status,
+.ship-stats {
+  flex: 1;
+}
+
+/* Position the status fields to line up with their corresponding stats */
+.ship-status .form-row:nth-child(1) { margin-top: 3.5rem; }  /* Lines up with Shields */
+.ship-status .form-row:nth-child(2) { margin-top: 2rem; }    /* Lines up with Torpedoes */
+.ship-status .form-row:nth-child(3) { margin-top: 2rem; }    /* Lines up with Stun */
+
+/* Create connecting lines */
+.ship-status .fraction-input {
+  position: relative;
+}
+
+.ship-status .fraction-input::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -2rem;
+  width: 2rem;
+  height: 2px;
+  border-top: 2px dotted #666;
+  transform: translateY(-50%);
+}
+
+/* Add some spacing between form rows */
+.form-row {
+  margin-bottom: 1rem;
+}
+
+/* Make the ship section headings stand out */
+.ship-layout h4 {
+  margin-bottom: 1.5rem;
+  color: #FFCC00;
+  font-size: 1.2rem;
+  border-bottom: 2px solid #666;
+  padding-bottom: 0.5rem;
+  text-shadow: -2px 2px 0px rgba(0, 0, 0, 0.3);
+} 

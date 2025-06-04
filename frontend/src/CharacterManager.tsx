@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { CharacterForm } from './CharacterForm';
+import { CharacterForm } from './components/character/CharacterForm';
 import { CharacterSettingsForm } from './CharacterSettingsForm';
 import { CharacterList } from './components/character/CharacterList';
 import { useCharacters } from './contexts/CharacterContext';

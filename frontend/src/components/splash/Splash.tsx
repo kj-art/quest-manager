@@ -2,12 +2,18 @@ import React from 'react';
 import { ImageBanner } from './ImageBanner';
 import './Splash.css';
 
-interface SplashProps
+interface PageInfo
 {
-  pageComponents: Record<string, React.ReactNode>;
+  component: React.ComponentType;
+  title: string;
 }
 
-export function Splash({ pageComponents }: SplashProps)
+interface SplashProps
+{
+  pages: Record<string, PageInfo>;
+}
+
+export function Splash({ pages }: SplashProps)
 {
   const [hoveredIndex, setHoveredIndex] = React.useState<number | null>(null);
 
@@ -18,7 +24,7 @@ export function Splash({ pageComponents }: SplashProps)
       <div className="splash-container">
         <img src="../src/assets/splash_main.png" className="splash-main" />
         <div className="banner-list">
-          {Object.keys(pageComponents).map((slug, index) => (
+          {Object.keys(pages).map((slug, index) => (
             <ImageBanner
               key={slug}
               slug={slug}

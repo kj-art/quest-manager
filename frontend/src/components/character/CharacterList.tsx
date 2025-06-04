@@ -15,14 +15,22 @@ export const CharacterList: React.FC = () =>
   // Only recalculates when characters or searchTerm change
   const filteredCharacters = useMemo(() =>
   {
+    const searchTermLower = searchTerm.toLowerCase();
     return characters.filter((char) =>
     {
-      const inName = char.name.toLowerCase().includes(searchTerm.toLowerCase());
+      // Check if search term matches any part of the name
+      const nameMatch =
+        char.name.first.toLowerCase().includes(searchTermLower) ||
+        (char.name.nick?.toLowerCase() || '').includes(searchTermLower) ||
+        char.name.last.toLowerCase().includes(searchTermLower);
+
+      // Check if search term matches any tags
       const inTags = Array.isArray(char.tags) &&
-        char.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
-      return inName || inTags;
+        char.tags.some(tag => tag.toLowerCase().includes(searchTermLower));
+
+      return nameMatch || inTags;
     });
-  }, [characters, searchTerm]); // Dependencies array - only recompute when these values change
+  }, [characters, searchTerm]);
 
   return (
     <>

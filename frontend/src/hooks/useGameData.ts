@@ -16,6 +16,7 @@ export function useGameData() {
     const loadData = async () => {
       try {
         const data = await fetchGameData();
+        console.log(`DATA: ${JSON.stringify(data, null, 2)}`);
         setCharacters(data.characters);
         setSettings(data.settings);
         setError(null);

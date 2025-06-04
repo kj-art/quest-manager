@@ -3,6 +3,7 @@ import type { Character } from '../../types/Character';
 import { IconButton } from '../common/IconButton';
 import { useCharacters } from '../../contexts/CharacterContext';
 import './CharacterList.css';
+import { FractionField } from '../FractionField';
 
 interface CharacterRowProps
 {
@@ -13,13 +14,19 @@ interface CharacterRowProps
 // This component will only re-render if its props (character) change
 export const CharacterRow = React.memo<CharacterRowProps>(({ character }) =>
 {
-  const { healCharacter, updateCharacterHp, updateCharacterAp, setEditingCharacter, deleteCharacter } = useCharacters();
+  console.log(`CHARACTER!!!: ${JSON.stringify(character, null, 2)}`);
+  const { healCharacter, updateCharacterHp, updateCharacterHpMax, updateCharacterAp, setEditingCharacter, deleteCharacter } = useCharacters();
 
   // Memoize event handlers to prevent recreating functions on every render
   const handleHpChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) =>
   {
     updateCharacterHp(character.id, parseInt(e.target.value, 10));
   }, [character.id, updateCharacterHp]);
+
+  const handleTotalHpChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) =>
+  {
+    updateCharacterHpMax(character.id, parseInt(e.target.value, 10));
+  }, [character.id, updateCharacterHpMax]);
 
   const handleApChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) =>
   {
@@ -41,15 +48,28 @@ export const CharacterRow = React.memo<CharacterRowProps>(({ character }) =>
     deleteCharacter(character.id);
   }, [character.id, deleteCharacter]);
 
+  // Use nickname if available, otherwise use first name
+  const displayName = character.name.nick || character.name.first;
+
   return (
     <li className="character-row">
-      <span className="character-col name">{character.name}</span>
+      <span className="character-col name">{displayName}</span>
       <span className="character-col hp">
         <IconButton
           icon="button_heal"
           alt="Restore HP"
           onClick={handleHeal}
         />
+        {/*<FractionField
+          label=""
+          idStart="current-hp"
+          startValue={character.currentHp}
+          onStartChange={handleHpChange}
+          idEnd="total-hp"
+          endValue={character.totalHp}
+          onEndChange={handleTotalHpChange}
+          min={0}
+        />*/}
         <input
           className="fraction-input"
           type="number"
@@ -68,7 +88,7 @@ export const CharacterRow = React.memo<CharacterRowProps>(({ character }) =>
           style={{ width: '2rem' }}
         />
       </span>
-      <span className="character-col tags">{character.tags.join(', ')}</span>
+      <span className="character-col tags">{character.tags.join('|')}</span>
       <span className="character-col buttons">
         <IconButton
           icon="button_edit"

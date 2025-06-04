@@ -1,3 +1,23 @@
+/*
+
+
+I don't think total hp is getting updated, since it uses the same function as updating current hp.
+Fix this, and then make the linked logic in FractionField work with it.
+
+
+
+
+
+*/
+
+
+
+
+
+
+
+
+
 import React, { createContext, useContext, useReducer, useCallback } from 'react';
 import type { Dispatch } from 'react';
 import type { Character } from '../types/Character';
@@ -18,6 +38,7 @@ type CharacterAction =
   | { type: 'SET_EDITING'; payload: Character | null }
   | { type: 'SET_SEARCH_TERM'; payload: string }
   | { type: 'UPDATE_CHARACTER_HP'; payload: { id: string; hp: number } }
+  | { type: 'UPDATE_CHARACTER_HP_MAX'; payload: { id: string; hp: number } }
   | { type: 'UPDATE_CHARACTER_AP'; payload: { id: string; ap: number } }
   | { type: 'HEAL_CHARACTER'; payload?: string }; // undefined means heal all
 
@@ -79,6 +100,16 @@ function characterReducer(state: CharacterState, action: CharacterAction): Chara
         ),
       };
 
+    case 'UPDATE_CHARACTER_HP_MAX':
+      return {
+        ...state,
+        characters: state.characters.map(char =>
+          char.id === action.payload.id
+            ? { ...char, totalHp: action.payload.hp, currentHp: char.currentHp === char.totalHp ? action.payload.hp : char.currentHp }
+            : char
+        ),
+      };
+
     case 'UPDATE_CHARACTER_AP':
       return {
         ...state,
@@ -113,6 +144,7 @@ interface CharacterContextType extends CharacterState
   setEditingCharacter: (character: Character | null) => void;
   setSearchTerm: (term: string) => void;
   updateCharacterHp: (id: string, hp: number) => void;
+  updateCharacterHpMax: (id: string, hp: number) => void;
   updateCharacterAp: (id: string, ap: number) => void;
   healCharacter: (id?: string) => void;
 }
@@ -160,6 +192,11 @@ function CharacterProviderComponent({ children }: { children: React.ReactNode })
     dispatch({ type: 'UPDATE_CHARACTER_HP', payload: { id, hp } });
   }, []);
 
+  const updateCharacterHpMax = useCallback((id: string, hp: number) =>
+  {
+    dispatch({ type: 'UPDATE_CHARACTER_HP_MAX', payload: { id, hp } });
+  }, []);
+
   const updateCharacterAp = useCallback((id: string, ap: number) =>
   {
     dispatch({ type: 'UPDATE_CHARACTER_AP', payload: { id, ap } });
@@ -179,6 +216,7 @@ function CharacterProviderComponent({ children }: { children: React.ReactNode })
     setEditingCharacter,
     setSearchTerm,
     updateCharacterHp,
+    updateCharacterHpMax,
     updateCharacterAp,
     healCharacter,
   };
