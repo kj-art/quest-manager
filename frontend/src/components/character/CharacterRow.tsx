@@ -14,19 +14,18 @@ interface CharacterRowProps
 // This component will only re-render if its props (character) change
 export const CharacterRow = React.memo<CharacterRowProps>(({ character }) =>
 {
-  console.log(`CHARACTER!!!: ${JSON.stringify(character, null, 2)}`);
-  const { healCharacter, updateCharacterHp, updateCharacterHpMax, updateCharacterAp, setEditingCharacter, deleteCharacter } = useCharacters();
-
+  const { healCharacter, updateCharacterHp, updateCharacterAp, setEditingCharacter, deleteCharacter } = useCharacters();
+  //updateCharacterHpMax, 
   // Memoize event handlers to prevent recreating functions on every render
   const handleHpChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) =>
   {
     updateCharacterHp(character.id, parseInt(e.target.value, 10));
   }, [character.id, updateCharacterHp]);
 
-  const handleTotalHpChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) =>
+  /*const handleTotalHpChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) =>
   {
     updateCharacterHpMax(character.id, parseInt(e.target.value, 10));
-  }, [character.id, updateCharacterHpMax]);
+  }, [character.id, updateCharacterHpMax]);*/
 
   const handleApChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) =>
   {

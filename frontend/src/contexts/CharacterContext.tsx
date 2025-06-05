@@ -1,23 +1,3 @@
-/*
-
-
-I don't think total hp is getting updated, since it uses the same function as updating current hp.
-Fix this, and then make the linked logic in FractionField work with it.
-
-
-
-
-
-*/
-
-
-
-
-
-
-
-
-
 import React, { createContext, useContext, useReducer, useCallback } from 'react';
 import type { Dispatch } from 'react';
 import type { Character } from '../types/Character';
@@ -144,7 +124,7 @@ interface CharacterContextType extends CharacterState
   setEditingCharacter: (character: Character | null) => void;
   setSearchTerm: (term: string) => void;
   updateCharacterHp: (id: string, hp: number) => void;
-  updateCharacterHpMax: (id: string, hp: number) => void;
+  //updateCharacterHpMax: (id: string, hp: number) => void;
   updateCharacterAp: (id: string, ap: number) => void;
   healCharacter: (id?: string) => void;
 }
@@ -192,10 +172,10 @@ function CharacterProviderComponent({ children }: { children: React.ReactNode })
     dispatch({ type: 'UPDATE_CHARACTER_HP', payload: { id, hp } });
   }, []);
 
-  const updateCharacterHpMax = useCallback((id: string, hp: number) =>
+  /*const updateCharacterHpMax = useCallback((id: string, hp: number) =>
   {
     dispatch({ type: 'UPDATE_CHARACTER_HP_MAX', payload: { id, hp } });
-  }, []);
+  }, []);*/
 
   const updateCharacterAp = useCallback((id: string, ap: number) =>
   {
@@ -216,7 +196,7 @@ function CharacterProviderComponent({ children }: { children: React.ReactNode })
     setEditingCharacter,
     setSearchTerm,
     updateCharacterHp,
-    updateCharacterHpMax,
+    //updateCharacterHpMax,
     updateCharacterAp,
     healCharacter,
   };
