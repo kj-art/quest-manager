@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useReducer, useCallback } from 'react';
 import type { Dispatch } from 'react';
 import type { Character } from '../types/Character';
-import { v4 as uuidv4 } from 'uuid';
 
 interface CharacterState
 {
@@ -47,8 +46,9 @@ function characterReducer(state: CharacterState, action: CharacterAction): Chara
     case 'ADD_CHARACTER':
       return {
         ...state,
-        characters: [...state.characters, { ...action.payload, id: uuidv4() }],
+        characters: [...state.characters, action.payload],
       };
+
 
     case 'UPDATE_CHARACTER':
       return {
@@ -119,7 +119,7 @@ function characterReducer(state: CharacterState, action: CharacterAction): Chara
 interface CharacterContextType extends CharacterState
 {
   setCharacters: (characters: Character[] | ((prev: Character[]) => Character[])) => void;
-  addCharacter: (character: Omit<Character, 'id'>) => void;
+  addCharacter: (character: Character) => void;
   updateCharacter: (character: Character) => void;
   deleteCharacter: (id: string) => void;
   setEditingCharacter: (character: Character | null) => void;

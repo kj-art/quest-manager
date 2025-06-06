@@ -4,12 +4,13 @@ import { useCharacters } from '../../contexts/CharacterContext';
 import { useSettings } from '../../contexts/SettingsContext';
 import { createDefaultCharacter } from '../../utils/characterUtils';
 import './CharacterList.css';
+import { v4 as uuidv4 } from 'uuid';
 
 // Wrap with React.memo since this component doesn't need to re-render
 // when parent components change - only when context values change
 export const CharacterHeader = React.memo(() =>
 {
-  const { characters, addCharacter, healCharacter, setEditingCharacter } = useCharacters();
+  const { characters, healCharacter, setEditingCharacter } = useCharacters();
   const { toggleSettingsForm } = useSettings();
 
   // Memoize event handlers to maintain consistent references
@@ -40,10 +41,8 @@ export const CharacterHeader = React.memo(() =>
 
   const handleAddCharacter = () =>
   {
-    const newChar = createDefaultCharacter();
-    addCharacter(newChar);
-    // Save reference to pick up after it's added (see next step)
-    justAddedRef.current = true;
+    const newChar = { ...createDefaultCharacter(), id: uuidv4() };
+    setEditingCharacter(newChar);
   };
 
   const handleOpenSettings = useCallback(() =>

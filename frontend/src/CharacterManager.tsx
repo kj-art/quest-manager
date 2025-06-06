@@ -8,7 +8,7 @@ import { useSettings } from './contexts/SettingsContext';
 
 export function CharacterManager()
 {
-  const { editingCharacter, setEditingCharacter, setCharacters } = useCharacters();
+  const { editingCharacter, addCharacter, setEditingCharacter, setCharacters } = useCharacters();
   const { showSettingsForm, toggleSettingsForm } = useSettings();
   const { settings, setSettings, isLoading, error, characters } = useGameData();
 
@@ -39,7 +39,11 @@ export function CharacterManager()
     content = (
       <CharacterForm
         character={editingCharacter}
-        onSave={() => setEditingCharacter(null)}
+        onSave={(char) =>
+        {
+          addCharacter(char);
+          setEditingCharacter(null);
+        }}
         onCancel={() => setEditingCharacter(null)}
       />
     );
