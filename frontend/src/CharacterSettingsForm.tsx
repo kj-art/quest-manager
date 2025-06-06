@@ -1,6 +1,7 @@
 import React from 'react';
 import type { CharacterSettings } from './Character';
 import { FormField } from './components/FormField';
+import { useCharacterSettings } from './useCharacterSettings';
 
 /*
 

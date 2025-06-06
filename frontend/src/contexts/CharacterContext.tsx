@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useReducer, useCallback } from 'react';
-import type { Dispatch } from 'react';
-import type { Character } from '../types/Character';
+import type { Character } from '../Character';
 
 interface CharacterState
 {
@@ -11,7 +10,7 @@ interface CharacterState
 
 type CharacterAction =
   | { type: 'SET_CHARACTERS'; payload: Character[] | ((prev: Character[]) => Character[]) }
-  | { type: 'ADD_CHARACTER'; payload: Omit<Character, 'id'> }
+  | { type: 'ADD_CHARACTER'; payload: Character }
   | { type: 'UPDATE_CHARACTER'; payload: Character }
   | { type: 'DELETE_CHARACTER'; payload: string }
   | { type: 'SET_EDITING'; payload: Character | null }
@@ -65,7 +64,6 @@ function characterReducer(state: CharacterState, action: CharacterAction): Chara
       };
 
     case 'SET_EDITING':
-      console.log(`set editing: ${JSON.stringify(action.payload)}`);
       return { ...state, editingCharacter: action.payload };
 
     case 'SET_SEARCH_TERM':
@@ -143,7 +141,7 @@ function CharacterProviderComponent({ children }: { children: React.ReactNode })
     dispatch({ type: 'SET_CHARACTERS', payload: characters });
   }, []);
 
-  const addCharacter = useCallback((character: Omit<Character, 'id'>) =>
+  const addCharacter = useCallback((character: Character) =>
   {
     dispatch({ type: 'ADD_CHARACTER', payload: character });
   }, []);

@@ -4,7 +4,6 @@ import { useCharacters } from '../../contexts/CharacterContext';
 import { useSettings } from '../../contexts/SettingsContext';
 import { createDefaultCharacter } from '../../utils/characterUtils';
 import './CharacterList.css';
-import { v4 as uuidv4 } from 'uuid';
 
 // Wrap with React.memo since this component doesn't need to re-render
 // when parent components change - only when context values change
@@ -41,7 +40,7 @@ export const CharacterHeader = React.memo(() =>
 
   const handleAddCharacter = () =>
   {
-    const newChar = { ...createDefaultCharacter(), id: uuidv4() };
+    const newChar = { ...createDefaultCharacter(), id: crypto.randomUUID() };
     setEditingCharacter(newChar);
   };
 

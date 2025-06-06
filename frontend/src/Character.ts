@@ -1,55 +1,22 @@
-import { useState, useEffect } from 'react';
-import type { Stats, Stat } from './types/Character';
+export const STAT_NAMES = [
+  "strength",
+  "speed",
+  "sway",
+  "sneak",
+  "intelligence",
+  "perception",
+] as const;
 
-let totalStatPoints: number = 1;
-let abilityUpgradeMax: number = 1;
-let statUpgradeMax: number = 1;
-
-export interface CharacterSettings
-{
+export interface CharacterSettings {
   statTotal: number;
   abilityUpgradeMax: number;
   statUpgradeMax: number;
+  defaultHp: number;
+  defaultAttack: number;
 }
 
-// Function to update the editable total points value:
-export function setTotalStatPoints(points: number) {
-  if (points < 0) throw new Error("Total stat points must be non-negative");
-  totalStatPoints = points;
-}
-
-export function getTotalStatPoints()
-{
-  return totalStatPoints;
-}
-
-export function setAbilityUpgradeMax(points: number) {
-  if (points < 0) throw new Error("Ability upgrade max must be non-negative");
-  abilityUpgradeMax = points;
-}
-
-export function getAbilityUpgradeMax()
-{
-  return abilityUpgradeMax;
-}
-
-export function setStatUpgradeMax(points: number) {
-  if (points < 0) throw new Error("Stat upgrade max must be non-negative");
-  statUpgradeMax = points;
-}
-
-export function getStatUpgradeMax()
-{
-  return statUpgradeMax;
-}
-
-// Validation function using current totalStatPoints:
-export function isValidStatAllocation(character: Character): boolean {
-  const totalAllocated = Object.values(character.stats).reduce((sum, val) => sum + val, 0);
-  return totalAllocated <= totalStatPoints;
-}
-
-export const STAT_NAMES = ["strength", "speed", "sway", "sneak", "intelligence", "perception"] as const;
+export const CHARACTER_TYPES = ['player', 'NPC'] as const;
+export type CharacterType = typeof CHARACTER_TYPES[number];
 
 export interface Character {
   id: string;
@@ -65,7 +32,14 @@ export interface Character {
   totalHp: number;
   ap: number;
   attack: number;
-  stats: Stats;
+  stats: {
+    strength: number;
+    speed: number;
+    sway: number;
+    sneak: number;
+    intelligence: number;
+    perception: number;
+  };
   ship: {
     hp: number;
     shields: number;
@@ -83,6 +57,3 @@ export interface Character {
   statUpgradePoints: number;
   tags: string[];
 }
-
-export const CHARACTER_TYPES = ['player', 'NPC'] as const;
-export type CharacterType = typeof CHARACTER_TYPES[number];

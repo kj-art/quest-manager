@@ -5,7 +5,7 @@ from .services.sheets import fetch_game_data, write_game_data
 app = FastAPI()
 
 @app.get("/api/data")
-def get_data(sheets: List[str] = Query(default=["Characters", "Globals"])):
+def get_data(sheets: List[str] = Query()):
     return fetch_game_data(sheets)
 
 '''@app.post("api/data")

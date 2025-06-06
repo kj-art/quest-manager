@@ -1,6 +1,12 @@
 import React, { createContext, useContext, useReducer, useCallback } from 'react';
-import type { CharacterSettings } from '../types/Character';
+import type { CharacterSettings } from '../Character';
 import { setAbilityUpgradeMax, setStatUpgradeMax, setTotalStatPoints } from '../utils/characterUtils';
+
+
+// make settings similar to character
+// why are there two initial states for settings? here and useGameData?
+
+
 
 interface SettingsState
 {
@@ -17,6 +23,8 @@ const initialState: SettingsState = {
     statTotal: 0,
     abilityUpgradeMax: 0,
     statUpgradeMax: 0,
+    defaultHp: 0,
+    defaultAttack: 0
   },
   showSettingsForm: false,
 };

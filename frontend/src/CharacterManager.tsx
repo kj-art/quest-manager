@@ -18,7 +18,6 @@ export function CharacterManager()
     if (characters)
     {
       setCharacters(characters);
-      //setEditingCharacter(null);
     }
   }, [characters, setCharacters]);
 
@@ -33,7 +32,6 @@ export function CharacterManager()
   }
 
   let content;
-  console.log(`editing character: ${editingCharacter}`);
   if (editingCharacter)
   {
     content = (

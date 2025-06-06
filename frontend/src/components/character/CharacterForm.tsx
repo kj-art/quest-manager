@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import type { Character, CharacterType } from '../../types/Character';
-import { CHARACTER_TYPES } from '../../types/Character';
+import type { Character, CharacterType } from '../../Character';
+import { CHARACTER_TYPES } from '../../Character';
+import { useCharacterSettings } from '../../useCharacterSettings'
 import { FormField } from '../FormField';
 import { FractionField } from '../FractionField';
-import { getTotalStatPoints, getAbilityUpgradeMax, getStatUpgradeMax } from '../../Character';
+import { createDefaultCharacter } from '../../utils/characterUtils';
 import './CharacterForm.css';
 
 interface CharacterFormProps
@@ -19,50 +20,11 @@ type NestedKeyOf<T> = {
   : K
 }[keyof T & (string | number)];
 
-function createDefaultCharacter(): Omit<Character, 'id'>
-{
-  return {
-    name: {
-      first: '',
-      nick: '',
-      last: ''
-    },
-    type: 'NPC' as CharacterType,
-    age: 0,
-    homePlanet: '',
-    currentHp: 10,
-    totalHp: 10,
-    ap: 0,
-    attack: 0,
-    stats: {
-      strength: 0,
-      speed: 0,
-      sway: 0,
-      sneak: 0,
-      intelligence: 0,
-      perception: 0
-    },
-    ship: {
-      hp: 100,
-      shields: 100,
-      torpedoAmmo: 10,
-      torpedoes: 25,
-      stunAmmo: 10,
-      stun: 15,
-      targeting: 5,
-      speed: 6,
-      range: 4,
-      firepower: 8
-    },
-    backstory: '',
-    abilityUpgradePoints: 0,
-    statUpgradePoints: 0,
-    tags: []
-  };
-}
-
 export function CharacterForm({ character, onSave, onCancel }: CharacterFormProps)
 {
+  const {
+    validateStatAllocation,
+  } = useCharacterSettings();
   const [formCharacter, setFormCharacter] = useState<Character>(() =>
   {
     if (character)
@@ -148,7 +110,6 @@ export function CharacterForm({ character, onSave, onCancel }: CharacterFormProp
   function handleSubmit(e: React.FormEvent<HTMLFormElement>)
   {
     e.preventDefault();
-
     const newErrors: Record<string, string> = {};
 
     if (!formCharacter.name.first.trim())
@@ -158,11 +119,24 @@ export function CharacterForm({ character, onSave, onCancel }: CharacterFormProp
 
     setErrors(newErrors);
 
-    if (Object.keys(newErrors).length === 0)
+    if (Object.keys(newErrors).length > 0)
     {
-      onSave(formCharacter);
+      return;
     }
+
+    const { isValid, totalAssigned, expectedTotal } = validateStatAllocation(formCharacter);
+    console.log(`****IS VALID ${isValid} ${totalAssigned} ${expectedTotal}`);
+    if (!isValid)
+    {
+      const proceed = window.confirm(
+        `Stat points total ${totalAssigned}, but expected ${expectedTotal}. Continue anyway?`
+      );
+      if (!proceed) return;
+    }
+
+    onSave(formCharacter);
   }
+
 
   return (
     <form onSubmit={handleSubmit}>
@@ -216,7 +190,7 @@ export function CharacterForm({ character, onSave, onCancel }: CharacterFormProp
             onStartChange={val => handleChange('currentHp', val)}
             idEnd="total-hp"
             endValue={formCharacter.totalHp}
-            onEndChange={val => handleEndChange('totalHp', 'currentHp', val)}
+            onEndChange={e => handleEndChange('totalHp', 'currentHp', Number(e.target.value))}
             min={0}
           />
 
@@ -408,7 +382,6 @@ export function CharacterForm({ character, onSave, onCancel }: CharacterFormProp
       </div>
 
       <div className="form-section">
-        <h3>Tags</h3>
         <FormField
           label="Tags (comma-separated):"
           type="text"
