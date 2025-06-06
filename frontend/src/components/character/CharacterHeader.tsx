@@ -1,14 +1,15 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { IconButton } from '../common/IconButton';
 import { useCharacters } from '../../contexts/CharacterContext';
 import { useSettings } from '../../contexts/SettingsContext';
+import { createDefaultCharacter } from '../../utils/characterUtils';
 import './CharacterList.css';
 
 // Wrap with React.memo since this component doesn't need to re-render
 // when parent components change - only when context values change
 export const CharacterHeader = React.memo(() =>
 {
-  const { healCharacter, setEditingCharacter } = useCharacters();
+  const { characters, addCharacter, healCharacter, setEditingCharacter } = useCharacters();
   const { toggleSettingsForm } = useSettings();
 
   // Memoize event handlers to maintain consistent references
@@ -18,11 +19,32 @@ export const CharacterHeader = React.memo(() =>
     healCharacter();
   }, [healCharacter]);
 
-  const handleAddCharacter = useCallback(() =>
+  /*const handleAddCharacter = useCallback(() =>
   {
     // null means create new character
     setEditingCharacter(null);
-  }, [setEditingCharacter]);
+  }, [setEditingCharacter]);*/
+
+  const justAddedRef = useRef(false);
+
+  useEffect(() =>
+  {
+    if (justAddedRef.current)
+    {
+      justAddedRef.current = false;
+      const newest = characters[characters.length - 1];
+      setEditingCharacter(newest);
+    }
+  }, [characters]);
+
+
+  const handleAddCharacter = () =>
+  {
+    const newChar = createDefaultCharacter();
+    addCharacter(newChar);
+    // Save reference to pick up after it's added (see next step)
+    justAddedRef.current = true;
+  };
 
   const handleOpenSettings = useCallback(() =>
   {

@@ -65,6 +65,7 @@ function characterReducer(state: CharacterState, action: CharacterAction): Chara
       };
 
     case 'SET_EDITING':
+      console.log(`set editing: ${JSON.stringify(action.payload)}`);
       return { ...state, editingCharacter: action.payload };
 
     case 'SET_SEARCH_TERM':

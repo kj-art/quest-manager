@@ -15,10 +15,9 @@ export function useGameData() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const data = await fetchGameData();
-        console.log(`DATA: ${JSON.stringify(data, null, 2)}`);
-        setCharacters(data.characters);
-        setSettings(data.settings);
+        const data = await fetchGameData('Characters', 'Globals');
+        setCharacters(data.Characters);
+        setSettings(data.Globals?.[0]);
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred while fetching game data');

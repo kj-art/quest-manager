@@ -1,8 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import type { Character, Stats, CharacterType, CharacterSettings } from './Character';
-import { STAT_NAMES, getTotalStatPoints, getAbilityUpgradeMax, getStatUpgradeMax, CHARACTER_TYPES } from './Character';
+import React from 'react';
+import type { CharacterSettings } from './Character';
 import { FormField } from './components/FormField';
-import { FractionField } from './components/FractionField';
+
+/*
+
+settings button isn't working
+
+add character button isn't working
+
+*/
+
 
 interface CharacterSettingsFormProps
 {

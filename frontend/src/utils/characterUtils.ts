@@ -60,24 +60,44 @@ function defaultStats(): Stats
   return stats;
 }
 
-// Named function declaration for better Fast Refresh compatibility
-export function createDefaultCharacter(): Character
+export function createDefaultCharacter(): Omit<Character, 'id'>
 {
-  const chr = {
-    id: '',
-    name: '',
+  return {
+    name: {
+      first: '',
+      nick: '',
+      last: '',
+    },
     type: 'NPC',
     age: 0,
     homePlanet: '',
-    currentHp: 0,
-    totalHp: 0,
-    ap: 0,
-    attack: 0,
-    stats: defaultStats(),
+    currentHp: 14,//settings.defaultHp,
+    totalHp: 14,//settings.defaultHp,
+    ap: 20,
+    attack: 3,//settings.defaultAttack,
+    stats: {
+      strength: 0,
+      speed: 0,
+      sway: 0,
+      sneak: 0,
+      intelligence: 0,
+      perception: 0
+    },
+    ship: {
+      hp: 10,
+      shields: 10,
+      torpedoAmmo: 1,
+      torpedoes: 1,
+      stunAmmo: 1,
+      stun: 1,
+      targeting: 11,
+      speed: 1,
+      range: 10,
+      firepower: 1
+    },
     backstory: '',
     abilityUpgradePoints: 0,
     statUpgradePoints: 0,
-    tags: [],
-  } as Character;
-  return chr;
-} 
+    tags: []
+  } as Omit<Character, 'id'>;
+}

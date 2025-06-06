@@ -21,7 +21,8 @@ venv/
 
 # Secrets
 *.local
-backend/google-creds.json
+backend/credentials/
+backend/.env
 
 # Editor & OS files
 .vscode/

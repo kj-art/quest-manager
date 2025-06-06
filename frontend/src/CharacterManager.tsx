@@ -1,14 +1,15 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { CharacterForm } from './components/character/CharacterForm';
 import { CharacterSettingsForm } from './CharacterSettingsForm';
 import { CharacterList } from './components/character/CharacterList';
 import { useCharacters } from './contexts/CharacterContext';
 import { useGameData } from './hooks/useGameData';
+import { useSettings } from './contexts/SettingsContext';
 
 export function CharacterManager()
 {
   const { editingCharacter, setEditingCharacter, setCharacters } = useCharacters();
-  const [showSettingsForm, setShowSettingsForm] = useState(false);
+  const { showSettingsForm, toggleSettingsForm } = useSettings();
   const { settings, setSettings, isLoading, error, characters } = useGameData();
 
   // Sync characters from game data to character context
@@ -17,6 +18,7 @@ export function CharacterManager()
     if (characters)
     {
       setCharacters(characters);
+      //setEditingCharacter(null);
     }
   }, [characters, setCharacters]);
 
@@ -30,26 +32,38 @@ export function CharacterManager()
     return <div>Error loading game data: {error}</div>;
   }
 
-  return (
-    <div className="top-left-heading">
-      {!editingCharacter && !showSettingsForm && (
-        <CharacterList />
-      )}
-
-      {editingCharacter && (
-        <CharacterForm
-          character={editingCharacter}
-          onSave={() => setEditingCharacter(null)}
-          onCancel={() => setEditingCharacter(null)}
-        />
-      )}
-      {showSettingsForm && (
+  let content;
+  console.log(`editing character: ${editingCharacter}`);
+  if (editingCharacter)
+  {
+    content = (
+      <CharacterForm
+        character={editingCharacter}
+        onSave={() => setEditingCharacter(null)}
+        onCancel={() => setEditingCharacter(null)}
+      />
+    );
+  }
+  else
+  {
+    if (showSettingsForm)
+    {
+      content = (
         <CharacterSettingsForm
           settings={settings}
           onChange={setSettings}
-          onSubmit={() => setShowSettingsForm(false)}
+          onSubmit={() => toggleSettingsForm(false)}
         />
-      )}
+      );
+    }
+    else
+      content = <CharacterList />;
+  }
+
+  return (
+    <div className="top-left-heading">
+      {content}
     </div>
   );
+
 }
