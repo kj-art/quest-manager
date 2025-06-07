@@ -1,5 +1,5 @@
 // useCharacterSettings.ts
-import { useSettings } from './contexts/SettingsContext';
+/*import { useSettings } from './contexts/CharacterSettingsContext';
 import type { Character } from './Character';
 
 export function useCharacterSettings() {
@@ -61,3 +61,4 @@ export function useCharacterSettings() {
     validateStatAllocation,
   };
 }
+*/

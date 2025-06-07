@@ -1,12 +1,19 @@
 .icon-button {
+  outline: none;
   background: none;
   border: none;
   padding: 0;
   margin: 0;
   cursor: pointer;
-  width: 32px; /* or however large you want the icon */
+  width: 32px;
   height: 32px;
   display: inline-block;
+
+  /* Default pixel-border style (optional, for a tactile UI look) */
+  box-shadow: 0 0 0 2px #000, 2px 2px 0 0 #444;
+  background-color: transparent;
+  image-rendering: pixelated;
+  transition: transform 0.05s, box-shadow 0.05s;
 }
 
 .icon-button img {
@@ -14,4 +21,21 @@
   height: 100%;
   object-fit: contain;
   display: block;
+  image-rendering: pixelated;
+}
+
+/* Hover: lift it up slightly */
+.icon-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 2px #000, 3px 3px 0 0 #666;
+}
+
+/* Active: sink it down slightly */
+.icon-button:active {
+  transform: translateY(1px);
+  box-shadow: 0 0 0 2px #000, 1px 1px 0 0 #222;
+}
+
+.icon-button:focus {
+  outline: none; /* Also make sure focused state doesn't add it */
 }

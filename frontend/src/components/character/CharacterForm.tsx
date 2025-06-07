@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
 import type { Character, CharacterType } from '../../Character';
 import { CHARACTER_TYPES } from '../../Character';
-import { useCharacterSettings } from '../../useCharacterSettings'
 import { FormField } from '../FormField';
 import { FractionField } from '../FractionField';
 import { createDefaultCharacter } from '../../utils/characterUtils';
 import './CharacterForm.css';
+import { useCharacterSettings } from '../../contexts/CharacterSettingsContext';
 
 interface CharacterFormProps
 {
@@ -22,9 +22,7 @@ type NestedKeyOf<T> = {
 
 export function CharacterForm({ character, onSave, onCancel }: CharacterFormProps)
 {
-  const {
-    validateStatAllocation,
-  } = useCharacterSettings();
+  const { settings } = useCharacterSettings();
   const [formCharacter, setFormCharacter] = useState<Character>(() =>
   {
     if (character)
@@ -124,8 +122,9 @@ export function CharacterForm({ character, onSave, onCancel }: CharacterFormProp
       return;
     }
 
-    const { isValid, totalAssigned, expectedTotal } = validateStatAllocation(formCharacter);
-    console.log(`****IS VALID ${isValid} ${totalAssigned} ${expectedTotal}`);
+    const totalAssigned = Object.values(formCharacter.stats).reduce((sum, val) => sum + val, 0);
+    const expectedTotal = settings['statTotal' as keyof typeof settings];
+    const isValid = totalAssigned === expectedTotal;
     if (!isValid)
     {
       const proceed = window.confirm(

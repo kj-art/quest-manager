@@ -1,16 +1,17 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { CharacterForm } from './components/character/CharacterForm';
 import { CharacterSettingsForm } from './CharacterSettingsForm';
 import { CharacterList } from './components/character/CharacterList';
 import { useCharacters } from './contexts/CharacterContext';
 import { useGameData } from './hooks/useGameData';
-import { useSettings } from './contexts/SettingsContext';
+import { useUI } from './contexts/UIContext';
 
 export function CharacterManager()
 {
   const { editingCharacter, addCharacter, setEditingCharacter, setCharacters } = useCharacters();
-  const { showSettingsForm, toggleSettingsForm } = useSettings();
   const { settings, setSettings, isLoading, error, characters } = useGameData();
+  //const [showSettingsForm, setShowSettingsForm] = useState(false);
+  const { showSettingsForm, toggleSettingsForm } = useUI();
 
   // Sync characters from game data to character context
   useEffect(() =>
@@ -48,18 +49,15 @@ export function CharacterManager()
   }
   else
   {
-    if (showSettingsForm)
-    {
-      content = (
-        <CharacterSettingsForm
-          settings={settings}
-          onChange={setSettings}
-          onSubmit={() => toggleSettingsForm(false)}
-        />
-      );
-    }
-    else
-      content = <CharacterList />;
+    content = showSettingsForm ? (
+      <CharacterSettingsForm
+        settings={settings}
+        onChange={setSettings}
+        onSubmit={() => toggleSettingsForm(false)}
+      />
+    ) : (
+      <CharacterList />
+    );
   }
 
   return (
@@ -67,5 +65,4 @@ export function CharacterManager()
       {content}
     </div>
   );
-
 }

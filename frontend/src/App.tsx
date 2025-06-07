@@ -5,7 +5,8 @@ import './components/header/Header.css';
 import React from 'react';
 import { Splash } from './components/splash/Splash';
 import { CharacterProvider } from './contexts/CharacterContext';
-import { SettingsProvider } from './contexts/SettingsContext';
+import { CharacterSettingsProvider } from './contexts/CharacterSettingsContext';
+import { UIProvider } from './contexts/UIContext';
 
 interface PageInfo
 {
@@ -16,7 +17,11 @@ interface PageInfo
 // The central map of component names and their paths
 const pages: Record<string, PageInfo> = {
   'character-manager': {
-    component: CharacterManager,
+    component: () => (
+      <UIProvider>
+        <CharacterManager />
+      </UIProvider>
+    ),
     title: 'Character Manager'
   },
   'script-writer': {
@@ -162,7 +167,7 @@ function Header()
 export default function App()
 {
   return (
-    <SettingsProvider>
+    <CharacterSettingsProvider>
       <CharacterProvider>
         <Header />
         <Routes>
@@ -172,6 +177,6 @@ export default function App()
           ))}
         </Routes>
       </CharacterProvider>
-    </SettingsProvider>
+    </CharacterSettingsProvider>
   );
 }

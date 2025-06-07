@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { IconButton } from '../common/IconButton';
 import { useCharacters } from '../../contexts/CharacterContext';
-import { useSettings } from '../../contexts/SettingsContext';
 import { createDefaultCharacter } from '../../utils/characterUtils';
+import { useUI } from '../../contexts/UIContext';
 import './CharacterList.css';
 
 // Wrap with React.memo since this component doesn't need to re-render
@@ -10,7 +10,7 @@ import './CharacterList.css';
 export const CharacterHeader = React.memo(() =>
 {
   const { characters, healCharacter, setEditingCharacter } = useCharacters();
-  const { toggleSettingsForm } = useSettings();
+  const { toggleSettingsForm } = useUI();
 
   // Memoize event handlers to maintain consistent references
   const handleHealAll = useCallback(() =>
@@ -18,12 +18,6 @@ export const CharacterHeader = React.memo(() =>
     // No id means heal all characters
     healCharacter();
   }, [healCharacter]);
-
-  /*const handleAddCharacter = useCallback(() =>
-  {
-    // null means create new character
-    setEditingCharacter(null);
-  }, [setEditingCharacter]);*/
 
   const justAddedRef = useRef(false);
 
@@ -43,11 +37,6 @@ export const CharacterHeader = React.memo(() =>
     const newChar = { ...createDefaultCharacter(), id: crypto.randomUUID() };
     setEditingCharacter(newChar);
   };
-
-  const handleOpenSettings = useCallback(() =>
-  {
-    toggleSettingsForm(true);
-  }, [toggleSettingsForm]);
 
   return (
     <li className="character-row character-header">
@@ -77,7 +66,7 @@ export const CharacterHeader = React.memo(() =>
         <IconButton
           icon="button_settings"
           alt="Settings"
-          onClick={handleOpenSettings}
+          onClick={() => toggleSettingsForm()}
         />
       </span>
     </li>
