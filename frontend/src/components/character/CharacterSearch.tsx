@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
-import { FormField } from '../FormField';
-import { useCharacters } from '../../contexts/CharacterContext';
+import { FormField } from '@cmp/field/FormField';
+import { useCharacters } from '@src/contexts/CharacterContext';
 
 // Wrap with React.memo since this component only needs to re-render
 // when searchTerm changes

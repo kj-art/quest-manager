@@ -1,29 +1,19 @@
-import React from 'react';
-import type { CharacterSettings } from './Character';
-import { FormField } from './components/FormField';
-//import { useCharacterSettings } from './useCharacterSettings';
-
-/*
-
-settings button isn't working
-
-add character button isn't working
-
-*/
-
+import { useCharacterSettings } from './contexts/CharacterSettingsContext';
+import type { CharacterSettings } from './Character'; // if needed
+import { FormField } from './components/field/FormField';
 
 interface CharacterSettingsFormProps
 {
-  settings: CharacterSettings;
-  onChange: (settings: CharacterSettings) => void;
   onSubmit: () => void;
 }
 
-export function CharacterSettingsForm({ settings, onChange, onSubmit }: CharacterSettingsFormProps)
+export function CharacterSettingsForm({ onSubmit }: CharacterSettingsFormProps)
 {
+  const { settings, updateSetting } = useCharacterSettings();
+
   function handleChange(field: keyof CharacterSettings, value: number)
   {
-    onChange({ ...settings, [field]: value });
+    updateSetting(field, value);
   }
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>)
@@ -31,6 +21,11 @@ export function CharacterSettingsForm({ settings, onChange, onSubmit }: Characte
     e.preventDefault();
     onSubmit();
   }
+
+  const makeChangeHandler = (field: keyof CharacterSettings) =>
+    (e: React.ChangeEvent<HTMLInputElement>) =>
+      handleChange(field, Number(e.target.value));
+
 
   return (
     <form onSubmit={handleSubmit}>
@@ -41,7 +36,7 @@ export function CharacterSettingsForm({ settings, onChange, onSubmit }: Characte
           type="number"
           cssClass="character-list-item"
           value={settings.statTotal}
-          onChange={e => handleChange("statTotal", Number(e.target.value))}
+          onChange={makeChangeHandler("statTotal")}
           min={0}
         />
       </ul>
@@ -51,7 +46,7 @@ export function CharacterSettingsForm({ settings, onChange, onSubmit }: Characte
           type="number"
           cssClass="character-list-item"
           value={settings.abilityUpgradeMax}
-          onChange={e => handleChange("abilityUpgradeMax", Number(e.target.value))}
+          onChange={makeChangeHandler("abilityUpgradeMax")}
           min={0}
         />
       </ul>
@@ -61,7 +56,7 @@ export function CharacterSettingsForm({ settings, onChange, onSubmit }: Characte
           type="number"
           cssClass="character-list-item"
           value={settings.statUpgradeMax}
-          onChange={e => handleChange("statUpgradeMax", Number(e.target.value))}
+          onChange={makeChangeHandler("statUpgradeMax")}
           min={0}
         />
       </ul>
@@ -69,6 +64,5 @@ export function CharacterSettingsForm({ settings, onChange, onSubmit }: Characte
         <button type="submit">Back</button>
       </div>
     </form>
-
   );
 }

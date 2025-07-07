@@ -1,16 +1,9 @@
 import { useState, useEffect } from 'react';
-import type { Character, CharacterSettings } from '../Character';
+import type { Character } from '../Character';
 import { fetchGameData } from '../services/gameDataService';
 
 export function useGameData() {
   const [characters, setCharacters] = useState<Character[]>([]);
-  const [settings, setSettings] = useState<CharacterSettings>({
-    statTotal: 4,
-    abilityUpgradeMax: 7,
-    statUpgradeMax: 7,
-    defaultHp: 14,
-    defaultAttack: 3
-  });
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,7 +12,6 @@ export function useGameData() {
       try {
         const data = await fetchGameData('Characters', 'CharacterSettings');
         setCharacters(data.Characters);
-        setSettings(data.CharacterSettings?.[0]);
         setError(null);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'An error occurred while fetching game data');
@@ -34,9 +26,7 @@ export function useGameData() {
   return {
     characters,
     setCharacters,
-    settings,
-    setSettings,
     isLoading,
     error
   };
-} 
+}

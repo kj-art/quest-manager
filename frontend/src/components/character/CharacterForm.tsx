@@ -1,11 +1,11 @@
 import { useState, useEffect } from 'react';
-import type { Character, CharacterType } from '../../Character';
-import { CHARACTER_TYPES } from '../../Character';
-import { FormField } from '../FormField';
-import { FractionField } from '../FractionField';
-import { createDefaultCharacter } from '../../utils/characterUtils';
+import type { Character, CharacterType } from '@src/Character';
+import { CHARACTER_TYPES } from '@src/Character';
+import { FormField } from '@cmp/field/FormField';
+import { FractionField } from '@cmp/field/FractionField';
+import { createDefaultCharacter } from '@src/utils/characterUtils';
 import './CharacterForm.css';
-import { useCharacterSettings } from '../../contexts/CharacterSettingsContext';
+import { useCharacterSettings } from '@src/contexts/CharacterSettingsContext';
 
 interface CharacterFormProps
 {
@@ -23,6 +23,10 @@ type NestedKeyOf<T> = {
 export function CharacterForm({ character, onSave, onCancel }: CharacterFormProps)
 {
   const { settings } = useCharacterSettings();
+  if (Object.keys(settings).length === 0)
+  {
+    return null; // Or a loading spinner if you want
+  }
   const [formCharacter, setFormCharacter] = useState<Character>(() =>
   {
     if (character)
@@ -122,7 +126,16 @@ export function CharacterForm({ character, onSave, onCancel }: CharacterFormProp
       return;
     }
 
-    const totalAssigned = Object.values(formCharacter.stats).reduce((sum, val) => sum + val, 0);
+    const totalAssigned = Object.values(formCharacter.stats).reduce((sum, val) => sum + Number(val), 0);
+    if ('statTotal' in settings)
+    {
+      console.log('statTotal exists:', settings.statTotal);
+    } else
+    {
+      console.warn('statTotal is missing from settings!', settings);
+    }
+    console.log(Object.keys(settings));
+
     const expectedTotal = settings['statTotal' as keyof typeof settings];
     const isValid = totalAssigned === expectedTotal;
     if (!isValid)

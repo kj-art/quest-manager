@@ -3,24 +3,50 @@ import { CharacterForm } from './components/character/CharacterForm';
 import { CharacterSettingsForm } from './CharacterSettingsForm';
 import { CharacterList } from './components/character/CharacterList';
 import { useCharacters } from './contexts/CharacterContext';
-import { useGameData } from './hooks/useGameData';
+import { useCharacterSettings } from './contexts/CharacterSettingsContext';
 import { useUI } from './contexts/UIContext';
+import { fetchGameData } from './services/gameDataService';
 
 export function CharacterManager()
 {
   const { editingCharacter, addCharacter, setEditingCharacter, setCharacters } = useCharacters();
-  const { settings, setSettings, isLoading, error, characters } = useGameData();
-  //const [showSettingsForm, setShowSettingsForm] = useState(false);
+  const { loadSettings } = useCharacterSettings();
   const { showSettingsForm, toggleSettingsForm } = useUI();
 
-  // Sync characters from game data to character context
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() =>
   {
-    if (characters)
+    const loadData = async () =>
     {
-      setCharacters(characters);
-    }
-  }, [characters, setCharacters]);
+      try
+      {
+        const data = await fetchGameData('Characters', 'CharacterSettings');
+        if (data.Characters)
+        {
+          setCharacters(data.Characters);
+        }
+        if (data.CharacterSettings?.[0])
+        {
+          loadSettings(data.CharacterSettings[0]);
+        }
+        setError(null);
+      } catch (err)
+      {
+        setError(
+          err instanceof Error
+            ? err.message
+            : 'An error occurred while fetching game data'
+        );
+      } finally
+      {
+        setIsLoading(false);
+      }
+    };
+
+    loadData();
+  }, [setCharacters, loadSettings]);
 
   if (isLoading)
   {
@@ -46,23 +72,14 @@ export function CharacterManager()
         onCancel={() => setEditingCharacter(null)}
       />
     );
-  }
-  else
+  } else
   {
     content = showSettingsForm ? (
-      <CharacterSettingsForm
-        settings={settings}
-        onChange={setSettings}
-        onSubmit={() => toggleSettingsForm(false)}
-      />
+      <CharacterSettingsForm onSubmit={() => toggleSettingsForm(false)} />
     ) : (
       <CharacterList />
     );
   }
 
-  return (
-    <div className="top-left-heading">
-      {content}
-    </div>
-  );
+  return <div className="top-left-heading">{content}</div>;
 }

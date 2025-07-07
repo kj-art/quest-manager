@@ -3,7 +3,7 @@ import type { Character } from '../../types/Character';
 import { IconButton } from '../common/IconButton';
 import { useCharacters } from '../../contexts/CharacterContext';
 import './CharacterList.css';
-import { FractionField } from '../FractionField';
+import { FractionField } from '../field/FractionField';
 
 interface CharacterRowProps
 {

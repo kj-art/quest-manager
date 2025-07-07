@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useCallback } from 'react';
-import type { Character } from '../Character';
+import type { Character } from '@src/Character';
 
 interface CharacterState
 {

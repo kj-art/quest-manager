@@ -1,9 +1,8 @@
 import React, { useMemo } from 'react';
-import type { Character } from '../../Character';
 import { CharacterHeader } from './CharacterHeader';
 import { CharacterRow } from './CharacterRow';
 import { CharacterSearch } from './CharacterSearch';
-import { useCharacters } from '../../contexts/CharacterContext';
+import { useCharacters } from '@src/contexts/CharacterContext';
 import './CharacterList.css';
 
 export const CharacterList: React.FC = () =>

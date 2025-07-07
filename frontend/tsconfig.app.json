@@ -27,8 +27,9 @@
     /* Path resolution */
     "baseUrl": ".",
     "paths": {
-      "*": ["src/*"]
-    }
+      "@src/*": ["src/*"],
+      "@cmp/*": ["src/components/*"]
+    },
   },
   "include": ["src"]
 }
