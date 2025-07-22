@@ -2,6 +2,7 @@ from google.oauth2 import service_account
 from googleapiclient.discovery import build
 from ..config import GOOGLE_CREDENTIALS_PATH, SCOPES, SPREADSHEET_ID
 from flatdict import FlatterDict
+from .auth import get_user_sheets_service
 
 def get_sheets_service():
     credentials = service_account.Credentials.from_service_account_file(
@@ -64,16 +65,55 @@ def fetch_game_data(sheet_names: list[str]):
 
     return response_data
 
-
-def write_game_data(range_name, data):
+def write_game_data(sheet_name: str, records: list[dict]):
     service = get_sheets_service()
-    body = {
-        'values': data  # should be a list of lists
-    }
-    result = service.spreadsheets().values().update(
+    sheet = service.spreadsheets()
+
+    # Read header and type rows like fetch_game_data
+    meta = sheet.values().get(
         spreadsheetId=SPREADSHEET_ID,
-        range=range_name,
-        valueInputOption='RAW',
-        body=body
+        range=f"{sheet_name}!A1:2"
     ).execute()
+
+    rows = meta.get("values", [])
+    if not rows:
+        raise Exception(f"No data found in '{sheet_name}'.")
+
+    headers = rows[0]
+    types = rows[1] if len(rows) > 1 else [""] * len(headers)
+    types += [""] * (len(headers) - len(types))  # pad types row
+
+    # Start new sheet values with headers and types
+    values = [headers, types]
+
+    for record in records:
+        row = []
+        # Unflatten for compatibility with dot notation keys
+        unflat = FlatterDict(record, delimiter='.', inverse=True).as_dict()
+
+        for i, header in enumerate(headers):
+            type_hint = types[i].strip().lower()
+            val = unflat.get(header, "")
+
+            if type_hint == "array" and isinstance(val, list):
+                val = '|'.join(str(v) for v in val)
+            elif isinstance(val, (int, float)):
+                val = str(val)
+            elif val is None:
+                val = ""
+            else:
+                val = str(val)
+
+            row.append(val)
+
+        values.append(row)
+
+    # Overwrite the whole sheet starting at A1
+    result = sheet.values().update(
+        spreadsheetId=SPREADSHEET_ID,
+        range=f"{sheet_name}!A1",
+        valueInputOption="RAW",
+        body={"values": values}
+    ).execute()
+
     return result

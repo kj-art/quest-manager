@@ -1,5 +1,5 @@
 import { useCharacterSettings } from './contexts/CharacterSettingsContext';
-import type { CharacterSettings } from './Character'; // if needed
+import type { CharacterSettings } from './Character';
 import { FormField } from './components/field/FormField';
 
 interface CharacterSettingsFormProps
