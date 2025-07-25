@@ -18,7 +18,7 @@ type CharacterAction =
   | { type: 'UPDATE_CHARACTER_HP'; payload: { id: string; hp: number } }
   | { type: 'UPDATE_CHARACTER_HP_MAX'; payload: { id: string; hp: number } }
   | { type: 'UPDATE_CHARACTER_AP'; payload: { id: string; ap: number } }
-  | { type: 'HEAL_CHARACTER'; payload?: string }; // undefined means heal all
+  | { type: 'HEAL_CHARACTER'; payload?: string };
 
 const initialState: CharacterState = {
   characters: [],
@@ -47,7 +47,6 @@ function characterReducer(state: CharacterState, action: CharacterAction): Chara
         ...state,
         characters: [...state.characters, action.payload],
       };
-
 
     case 'UPDATE_CHARACTER':
       return {
@@ -123,14 +122,12 @@ interface CharacterContextType extends CharacterState
   setEditingCharacter: (character: Character | null) => void;
   setSearchTerm: (term: string) => void;
   updateCharacterHp: (id: string, hp: number) => void;
-  //updateCharacterHpMax: (id: string, hp: number) => void;
   updateCharacterAp: (id: string, ap: number) => void;
   healCharacter: (id?: string) => void;
 }
 
 const CharacterContext = createContext<CharacterContextType | null>(null);
 
-// Named function component for better debugging and Fast Refresh compatibility
 function CharacterProviderComponent({ children }: { children: React.ReactNode })
 {
   const [state, dispatch] = useReducer(characterReducer, initialState);
@@ -171,11 +168,6 @@ function CharacterProviderComponent({ children }: { children: React.ReactNode })
     dispatch({ type: 'UPDATE_CHARACTER_HP', payload: { id, hp } });
   }, []);
 
-  /*const updateCharacterHpMax = useCallback((id: string, hp: number) =>
-  {
-    dispatch({ type: 'UPDATE_CHARACTER_HP_MAX', payload: { id, hp } });
-  }, []);*/
-
   const updateCharacterAp = useCallback((id: string, ap: number) =>
   {
     dispatch({ type: 'UPDATE_CHARACTER_AP', payload: { id, ap } });
@@ -195,7 +187,6 @@ function CharacterProviderComponent({ children }: { children: React.ReactNode })
     setEditingCharacter,
     setSearchTerm,
     updateCharacterHp,
-    //updateCharacterHpMax,
     updateCharacterAp,
     healCharacter,
   };
@@ -209,7 +200,6 @@ function CharacterProviderComponent({ children }: { children: React.ReactNode })
   );
 }
 
-// Named function declaration for better Fast Refresh compatibility
 export function useCharacters()
 {
   const context = useContext(CharacterContext);
@@ -220,5 +210,4 @@ export function useCharacters()
   return context;
 }
 
-// Separate export for better Fast Refresh compatibility
-export const CharacterProvider = CharacterProviderComponent; 
+export const CharacterProvider = CharacterProviderComponent;

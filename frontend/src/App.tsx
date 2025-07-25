@@ -7,6 +7,8 @@ import { Splash } from './components/splash/Splash';
 import { CharacterProvider } from './contexts/CharacterContext';
 import { CharacterSettingsProvider } from './contexts/CharacterSettingsContext';
 import { UIProvider } from './contexts/UIContext';
+import { SaveStatus } from './components/common/SaveStatus';
+import './components/common/SaveStatus.css';
 
 interface PageInfo
 {
@@ -170,6 +172,7 @@ export default function App()
     <CharacterSettingsProvider>
       <CharacterProvider>
         <Header />
+        <SaveStatus />
         <Routes>
           <Route path="/" element={<Splash pages={pages} />} />
           {Object.entries(pages).map(([slug, { component: Component }]) => (

@@ -2,7 +2,7 @@ import React, { createContext, useContext, useReducer, useCallback } from 'react
 
 export interface CharacterSettings
 {
-  [key: string]: number; // allow arbitrary numeric settings
+  [key: string]: number;
 }
 
 interface CharacterSettingsState
@@ -23,9 +23,10 @@ function reducer(state: CharacterSettingsState, action: CharacterSettingsAction)
   switch (action.type)
   {
     case 'SET_ALL_SETTINGS':
-      return { settings: action.payload };
+      return { ...state, settings: action.payload };
     case 'UPDATE_SETTING':
       return {
+        ...state,
         settings: {
           ...state.settings,
           [action.key]: action.value,
@@ -59,7 +60,11 @@ export const CharacterSettingsProvider = ({ children }: { children: React.ReactN
   }, []);
 
   return (
-    <CharacterSettingsContext.Provider value={{ ...state, loadSettings, updateSetting }}>
+    <CharacterSettingsContext.Provider value={{
+      ...state,
+      loadSettings,
+      updateSetting
+    }}>
       {children}
     </CharacterSettingsContext.Provider>
   );

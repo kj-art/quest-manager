@@ -1,0 +1,50 @@
+.save-status {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.save-status.saving {
+  background-color: #2196F3;
+  color: white;
+  animation: pulse 1.5s ease-in-out infinite alternate;
+}
+
+.save-status.saved {
+  background-color: #4CAF50;
+  color: white;
+  opacity: 0.8;
+}
+
+.save-status.error {
+  background-color: #f44336;
+  color: white;
+  animation: shake 0.5s ease-in-out;
+}
+
+@keyframes pulse {
+  from {
+    opacity: 0.6;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}

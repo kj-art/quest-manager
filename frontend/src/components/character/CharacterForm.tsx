@@ -136,7 +136,7 @@ export function CharacterForm({ character, onSave, onCancel }: CharacterFormProp
     }
     console.log(Object.keys(settings));
 
-    const expectedTotal = settings['statTotal' as keyof typeof settings];
+    const expectedTotal = Number(settings['statTotal' as keyof typeof settings]);
     const isValid = totalAssigned === expectedTotal;
     if (!isValid)
     {

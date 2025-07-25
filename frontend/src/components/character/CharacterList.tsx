@@ -30,7 +30,8 @@ export const CharacterList: React.FC = () =>
       return nameMatch || inTags;
     });
   }, [characters, searchTerm]);
-
+  console.log('All character IDs:', characters.map(c => c.id));
+  console.log('Filtered character IDs:', filteredCharacters.map(c => c.id));
   return (
     <>
       <CharacterSearch />

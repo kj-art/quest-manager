@@ -65,6 +65,19 @@ def fetch_game_data(sheet_names: list[str]):
 
     return response_data
 
+def unflatten_dict(flat_dict, delimiter='.'):
+    """Convert a flat dict with dot notation keys back to nested dict"""
+    result = {}
+    for key, value in flat_dict.items():
+        keys = key.split(delimiter)
+        current = result
+        for k in keys[:-1]:
+            if k not in current:
+                current[k] = {}
+            current = current[k]
+        current[keys[-1]] = value
+    return result
+
 def write_game_data(sheet_name: str, records: list[dict]):
     service = get_sheets_service()
     sheet = service.spreadsheets()
@@ -89,7 +102,7 @@ def write_game_data(sheet_name: str, records: list[dict]):
     for record in records:
         row = []
         # Unflatten for compatibility with dot notation keys
-        unflat = FlatterDict(record, delimiter='.', inverse=True).as_dict()
+        unflat = unflatten_dict(record, delimiter='.')
 
         for i, header in enumerate(headers):
             type_hint = types[i].strip().lower()

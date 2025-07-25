@@ -3,6 +3,7 @@ import { IconButton } from '../common/IconButton';
 import { useCharacters } from '../../contexts/CharacterContext';
 import { createDefaultCharacter } from '../../utils/characterUtils';
 import { useUI } from '../../contexts/UIContext';
+import { saveGameData } from '../../services/gameDataService';
 import './CharacterList.css';
 
 // Wrap with React.memo since this component doesn't need to re-render
@@ -31,11 +32,25 @@ export const CharacterHeader = React.memo(() =>
     }
   }, [characters]);
 
-
   const handleAddCharacter = () =>
   {
     const newChar = { ...createDefaultCharacter(), id: crypto.randomUUID() };
     setEditingCharacter(newChar);
+  };
+
+  const handleManualSave = async () =>
+  {
+    try
+    {
+      console.log('Manual save triggered for characters:', characters);
+      await saveGameData('Characters', characters);
+      console.log('Manual save successful!');
+      alert('Characters saved successfully!');
+    } catch (error)
+    {
+      console.error('Manual save failed:', error);
+      alert(`Save failed: ${error}`);
+    }
   };
 
   return (
@@ -58,6 +73,9 @@ export const CharacterHeader = React.memo(() =>
         <strong>Tags</strong>
       </span>
       <span className="character-col buttons">
+        <button onClick={handleManualSave} style={{ marginRight: '0.5rem' }}>
+          💾 Save
+        </button>
         <IconButton
           icon="button_add"
           alt="Add Character"
@@ -71,4 +89,4 @@ export const CharacterHeader = React.memo(() =>
       </span>
     </li>
   );
-}); 
+});
