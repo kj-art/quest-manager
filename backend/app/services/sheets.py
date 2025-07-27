@@ -111,9 +111,6 @@ def write_game_data(sheet_name: str, records: list[dict]):
     types = rows[1] if len(rows) > 1 else [""] * len(headers)
     types += [""] * (len(headers) - len(types))  # pad types row
 
-    print(f"Sheet headers: {headers}")
-    print(f"First record keys: {list(records[0].keys()) if records else 'No records'}")
-
     # Start new sheet values with headers and types
     values = [headers, types]
 

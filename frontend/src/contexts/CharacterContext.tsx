@@ -1,11 +1,14 @@
-import React, { createContext, useContext, useReducer, useCallback } from 'react';
+import React, { createContext, useContext, useReducer, useCallback, useEffect, useRef } from 'react';
 import type { Character } from '@src/Character';
+import { useAutoSaveInline } from '../hooks/useAutoSaveInline';
 
 interface CharacterState
 {
   characters: Character[];
   editingCharacter: Character | null;
   searchTerm: string;
+  isSavingInline: boolean;
+  saveError: string | null;
 }
 
 type CharacterAction =
@@ -18,12 +21,16 @@ type CharacterAction =
   | { type: 'UPDATE_CHARACTER_HP'; payload: { id: string; hp: number } }
   | { type: 'UPDATE_CHARACTER_HP_MAX'; payload: { id: string; hp: number } }
   | { type: 'UPDATE_CHARACTER_AP'; payload: { id: string; ap: number } }
-  | { type: 'HEAL_CHARACTER'; payload?: string };
+  | { type: 'HEAL_CHARACTER'; payload?: string }
+  | { type: 'SET_SAVING_INLINE'; payload: boolean }
+  | { type: 'SET_SAVE_ERROR'; payload: string | null };
 
 const initialState: CharacterState = {
   characters: [],
   editingCharacter: null,
   searchTerm: '',
+  isSavingInline: false,
+  saveError: null,
 };
 
 function characterReducer(state: CharacterState, action: CharacterAction): CharacterState
@@ -108,6 +115,12 @@ function characterReducer(state: CharacterState, action: CharacterAction): Chara
         ),
       };
 
+    case 'SET_SAVING_INLINE':
+      return { ...state, isSavingInline: action.payload };
+
+    case 'SET_SAVE_ERROR':
+      return { ...state, saveError: action.payload };
+
     default:
       return state;
   }
@@ -131,6 +144,48 @@ const CharacterContext = createContext<CharacterContextType | null>(null);
 function CharacterProviderComponent({ children }: { children: React.ReactNode })
 {
   const [state, dispatch] = useReducer(characterReducer, initialState);
+
+  // Auto-save hook for inline edits only
+  const { triggerAutoSave } = useAutoSaveInline({
+    debounceMs: 2000, // Wait 2 seconds after last change
+    onSaveStart: () => dispatch({ type: 'SET_SAVING_INLINE', payload: true }),
+    onSaveSuccess: () =>
+    {
+      dispatch({ type: 'SET_SAVING_INLINE', payload: false });
+      dispatch({ type: 'SET_SAVE_ERROR', payload: null });
+    },
+    onSaveError: (error) =>
+    {
+      dispatch({ type: 'SET_SAVING_INLINE', payload: false });
+      dispatch({ type: 'SET_SAVE_ERROR', payload: error.message });
+    }
+  });
+
+  // Track which changes should trigger auto-save
+  const lastAutoSaveRef = useRef<string>('');
+  const isInitialLoadRef = useRef(true);
+
+  useEffect(() =>
+  {
+    // Skip auto-save on initial load
+    if (isInitialLoadRef.current)
+    {
+      isInitialLoadRef.current = false;
+      lastAutoSaveRef.current = JSON.stringify(state.characters);
+      return;
+    }
+
+    // Only auto-save if characters changed and we're not in form editing mode
+    const currentCharactersStr = JSON.stringify(state.characters);
+    const charactersChanged = lastAutoSaveRef.current !== currentCharactersStr;
+
+    if (charactersChanged && !state.editingCharacter && state.characters.length > 0)
+    {
+      console.log('Characters changed via inline edit, triggering auto-save...');
+      triggerAutoSave(state.characters);
+      lastAutoSaveRef.current = currentCharactersStr;
+    }
+  }, [state.characters, state.editingCharacter, triggerAutoSave]);
 
   const setCharacters = useCallback((characters: Character[] | ((prev: Character[]) => Character[])) =>
   {
