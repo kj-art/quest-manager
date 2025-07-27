@@ -20,6 +20,34 @@ def _parse_value(val):
         except ValueError:
             return val
 
+def unflatten_dict(flat_dict, delimiter='.'):
+    """Convert a flat dict with dot notation keys back to nested dict"""
+    result = {}
+    for key, value in flat_dict.items():
+        keys = key.split(delimiter)
+        current = result
+        for k in keys[:-1]:
+            if k not in current:
+                current[k] = {}
+            current = current[k]
+        current[keys[-1]] = value
+    return result
+
+def flatten_dict(nested_dict, delimiter='.'):
+    """Convert nested dict to flat dict with dot notation keys"""
+    result = {}
+    
+    def _flatten(obj, parent_key=''):
+        if isinstance(obj, dict):
+            for key, value in obj.items():
+                new_key = f"{parent_key}{delimiter}{key}" if parent_key else key
+                _flatten(value, new_key)
+        else:
+            result[parent_key] = obj
+    
+    _flatten(nested_dict)
+    return result
+
 def fetch_game_data(sheet_names: list[str]):
     service = get_sheets_service()
     sheet = service.spreadsheets()
@@ -59,24 +87,11 @@ def fetch_game_data(sheet_names: list[str]):
                     # Leave as is (usually string)
                     d[k] = v
 
-        # Flatten each dict
-        r_data = [FlatterDict(d, delimiter='.').as_dict() for d in r_data]
+        # Convert flat data from sheets to nested objects for React
+        r_data = [unflatten_dict(d, delimiter='.') for d in r_data]
         response_data[s] = r_data
 
     return response_data
-
-def unflatten_dict(flat_dict, delimiter='.'):
-    """Convert a flat dict with dot notation keys back to nested dict"""
-    result = {}
-    for key, value in flat_dict.items():
-        keys = key.split(delimiter)
-        current = result
-        for k in keys[:-1]:
-            if k not in current:
-                current[k] = {}
-            current = current[k]
-        current[keys[-1]] = value
-    return result
 
 def write_game_data(sheet_name: str, records: list[dict]):
     service = get_sheets_service()
@@ -96,17 +111,20 @@ def write_game_data(sheet_name: str, records: list[dict]):
     types = rows[1] if len(rows) > 1 else [""] * len(headers)
     types += [""] * (len(headers) - len(types))  # pad types row
 
+    print(f"Sheet headers: {headers}")
+    print(f"First record keys: {list(records[0].keys()) if records else 'No records'}")
+
     # Start new sheet values with headers and types
     values = [headers, types]
 
     for record in records:
         row = []
-        # Unflatten for compatibility with dot notation keys
-        unflat = unflatten_dict(record, delimiter='.')
+        # Convert nested objects to flat dict for compatibility with sheet headers
+        flat_record = flatten_dict(record, delimiter='.')
 
         for i, header in enumerate(headers):
             type_hint = types[i].strip().lower()
-            val = unflat.get(header, "")
+            val = flat_record.get(header, "")
 
             if type_hint == "array" and isinstance(val, list):
                 val = '|'.join(str(v) for v in val)
