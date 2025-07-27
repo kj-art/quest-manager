@@ -163,23 +163,32 @@ function CharacterProviderComponent({ children }: { children: React.ReactNode })
 
   // Track which changes should trigger auto-save
   const lastAutoSaveRef = useRef<string>('');
-  const isInitialLoadRef = useRef(true);
+  const hasInitiallyLoadedRef = useRef(false);
 
   useEffect(() =>
   {
-    // Skip auto-save on initial load
-    if (isInitialLoadRef.current)
+    const currentCharactersStr = JSON.stringify(state.characters);
+
+    // Mark as initially loaded when we first get data from the server
+    if (!hasInitiallyLoadedRef.current && state.characters.length > 0)
     {
-      isInitialLoadRef.current = false;
-      lastAutoSaveRef.current = JSON.stringify(state.characters);
+      console.log('Initial data load detected, setting baseline for auto-save...');
+      hasInitiallyLoadedRef.current = true;
+      lastAutoSaveRef.current = currentCharactersStr;
       return;
     }
 
-    // Only auto-save if characters changed and we're not in form editing mode
-    const currentCharactersStr = JSON.stringify(state.characters);
+    // Only auto-save if:
+    // 1. We've initially loaded data
+    // 2. Characters actually changed 
+    // 3. We're not in form editing mode
+    // 4. We have characters to save
     const charactersChanged = lastAutoSaveRef.current !== currentCharactersStr;
 
-    if (charactersChanged && !state.editingCharacter && state.characters.length > 0)
+    if (hasInitiallyLoadedRef.current &&
+      charactersChanged &&
+      !state.editingCharacter &&
+      state.characters.length > 0)
     {
       console.log('Characters changed via inline edit, triggering auto-save...');
       triggerAutoSave(state.characters);

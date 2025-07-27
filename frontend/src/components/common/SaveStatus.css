@@ -19,7 +19,12 @@
 .save-status.saved {
   background-color: #4CAF50;
   color: white;
-  opacity: 0.8;
+  opacity: 1;
+  transition: opacity 1s ease-out;
+}
+
+.save-status.saved.fade-out {
+  opacity: 0;
 }
 
 .save-status.error {
