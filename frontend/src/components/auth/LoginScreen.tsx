@@ -1,30 +1,41 @@
-// frontend/src/components/auth/LoginScreen.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import './LoginScreen.css';
 
 export const LoginScreen: React.FC = () =>
 {
   const { loginWithGoogle, loginDemo, isLoading } = useAuth();
+  const [googleLoading, setGoogleLoading] = useState(false);
+
+  const handleGoogleLogin = async () =>
+  {
+    setGoogleLoading(true);
+    try
+    {
+      await loginWithGoogle();
+    } catch (error)
+    {
+      console.error('Google login failed:', error);
+      setGoogleLoading(false);
+    }
+  };
 
   return (
     <div className="login-container">
       <div className="login-content">
-        {/* Title matching your app style */}
         <h1 className="login-title">Quest Manager</h1>
         <h2 className="login-subtitle">Tales of Verdana</h2>
 
         <div className="login-form">
           <h3>Choose Login Method</h3>
 
-          {/* Google Login Button */}
           <button
             className="login-button google-login"
-            onClick={loginWithGoogle}
-            disabled={isLoading}
+            onClick={handleGoogleLogin}
+            disabled={isLoading || googleLoading}
           >
-            {isLoading ? (
-              <span>Connecting to Google...</span>
+            {googleLoading ? (
+              <span>Redirecting to Google...</span>
             ) : (
               <>
                 <span className="google-icon">🔐</span>
@@ -33,16 +44,14 @@ export const LoginScreen: React.FC = () =>
             )}
           </button>
 
-          {/* Divider */}
           <div className="login-divider">
             <span>or</span>
           </div>
 
-          {/* Demo Mode Button */}
           <button
             className="login-button demo-login"
             onClick={loginDemo}
-            disabled={isLoading}
+            disabled={isLoading || googleLoading}
           >
             <span className="demo-icon">🧪</span>
             Continue in Demo Mode

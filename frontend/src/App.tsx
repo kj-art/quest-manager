@@ -7,8 +7,6 @@ import { Splash } from './components/splash/Splash';
 import { CharacterProvider } from './contexts/CharacterContext';
 import { CharacterSettingsProvider } from './contexts/CharacterSettingsContext';
 import { UIProvider } from './contexts/UIContext';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { LoginScreen } from './components/auth/LoginScreen';
 import { SaveStatus } from './components/common/SaveStatus';
 import './components/common/SaveStatus.css';
 
@@ -146,7 +144,6 @@ function HeadingText({ slug, headingText }: { slug: string; headingText: String 
 function Header()
 {
   const location = useLocation();
-  const { logout, user } = useAuth();
   const slug = location.pathname.slice(1); // remove leading '/'
   const headingText = slug ? formatDisplayName(slug) : 'Main';
 
@@ -163,32 +160,13 @@ function Header()
             <Link to={`/${slug}`}>{title}</Link>
           </span>
         ))}
-        <span>
-          <span style={{ color: '#999' }}>
-            {user?.isDemo ? '🧪 Demo: ' : '👤 '}{user?.name}
-          </span>
-        </span>
-        <span>
-          <button
-            onClick={logout}
-            style={{
-              background: 'none',
-              border: '1px solid #666',
-              color: '#ccc',
-              padding: '0.25rem 0.5rem',
-              fontSize: '0.8rem'
-            }}
-          >
-            Logout
-          </button>
-        </span>
       </nav>
     </div>
   );
 }
 
-// Main app content - only shown when authenticated
-function AuthenticatedApp()
+// App with dynamic routing
+export default function App()
 {
   return (
     <CharacterSettingsProvider>
@@ -203,30 +181,5 @@ function AuthenticatedApp()
         </Routes>
       </CharacterProvider>
     </CharacterSettingsProvider>
-  );
-}
-
-// Main App component with authentication logic
-function AppContent()
-{
-  const { user } = useAuth();
-
-  // Show login screen if not authenticated
-  if (!user)
-  {
-    return <LoginScreen />;
-  }
-
-  // Show main app if authenticated
-  return <AuthenticatedApp />;
-}
-
-// Root App with providers
-export default function App()
-{
-  return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
   );
 }

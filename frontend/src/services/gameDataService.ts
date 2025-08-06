@@ -7,6 +7,19 @@ function isDemoMode(): boolean {
   return demoUser === 'true';
 }
 
+// Get stored auth tokens
+function getAuthTokens(): { accessToken?: string; refreshToken?: string } | null {
+  const storedAuth = localStorage.getItem('auth_tokens');
+  if (!storedAuth) return null;
+  
+  try {
+    const { accessToken, refreshToken } = JSON.parse(storedAuth);
+    return { accessToken, refreshToken };
+  } catch {
+    return null;
+  }
+}
+
 // Demo mode data functions
 function fetchDemoData(sheetNames: string[]): Record<string, any[]> {
   const data: Record<string, any[]> = {};
@@ -35,37 +48,130 @@ function saveDemoData(sheetName: string, records: any[]): any {
   return { success: true, message: 'Saved to demo storage' };
 }
 
-// Original functions for real Google Sheets
-async function fetchRealGameData(sheetNames: string[]): Promise<Record<string, any[]>> {
+// Authenticated functions for real Google Sheets
+async function fetchAuthenticatedGameData(sheetNames: string[]): Promise<Record<string, any[]>> {
+  const tokens = getAuthTokens();
+  if (!tokens?.accessToken) {
+    throw new Error('No access token available');
+  }
+
   const query = sheetNames.map(name => `sheets=${encodeURIComponent(name)}`).join('&');
-  const response = await fetch(`/api/data?${query}`);
+  const response = await fetch(`/api/data?${query}`, {
+    headers: {
+      'Authorization': `Bearer ${tokens.accessToken}`
+    }
+  });
+
+  if (!response.ok) {
+    // Try to refresh token if unauthorized
+    if (response.status === 401 && tokens.refreshToken) {
+      const newTokens = await refreshAccessToken();
+      if (newTokens) {
+        // Retry with new token
+        const retryResponse = await fetch(`/api/data?${query}`, {
+          headers: {
+            'Authorization': `Bearer ${newTokens.accessToken}`
+          }
+        });
+        
+        if (retryResponse.ok) {
+          return await retryResponse.json();
+        }
+      }
+    }
+    throw new Error(`Failed to fetch data: ${response.statusText}`);
+  }
+
   return await response.json();
 }
 
-async function saveRealGameData(sheetName: string, records: any[]): Promise<any> {
+async function saveAuthenticatedGameData(sheetName: string, records: any[]): Promise<any> {
+  const tokens = getAuthTokens();
+  if (!tokens?.accessToken) {
+    throw new Error('No access token available');
+  }
+
   const response = await fetch(`/api/data/${encodeURIComponent(sheetName)}`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${tokens.accessToken}`
     },
     body: JSON.stringify(records)
   });
 
   if (!response.ok) {
+    // Try to refresh token if unauthorized
+    if (response.status === 401 && tokens.refreshToken) {
+      const newTokens = await refreshAccessToken();
+      if (newTokens) {
+        // Retry with new token
+        const retryResponse = await fetch(`/api/data/${encodeURIComponent(sheetName)}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${newTokens.accessToken}`
+          },
+          body: JSON.stringify(records)
+        });
+        
+        if (retryResponse.ok) {
+          return await retryResponse.json();
+        }
+      }
+    }
     throw new Error(`Failed to save data to sheet '${sheetName}': ${response.statusText}`);
   }
 
   return await response.json();
 }
 
-// Public API - routes to demo or real based on mode
+// Token refresh function
+async function refreshAccessToken(): Promise<{ accessToken: string } | null> {
+  const tokens = getAuthTokens();
+  if (!tokens?.refreshToken) return null;
+
+  try {
+    const response = await fetch('/auth/refresh', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ refresh_token: tokens.refreshToken })
+    });
+
+    if (!response.ok) {
+      console.error('Token refresh failed:', response.statusText);
+      return null;
+    }
+
+    const newTokens = await response.json();
+    console.log('Token refreshed successfully');
+    
+    // Update stored tokens
+    const storedAuth = localStorage.getItem('auth_tokens');
+    if (storedAuth) {
+      const authData = JSON.parse(storedAuth);
+      authData.accessToken = newTokens.access_token;
+      localStorage.setItem('auth_tokens', JSON.stringify(authData));
+      console.log('Updated stored access token');
+    }
+
+    return { accessToken: newTokens.access_token };
+  } catch (error) {
+    console.error('Token refresh error:', error);
+    return null;
+  }
+}
+
+// Public API - routes to demo or authenticated based on mode
 export async function fetchGameData(...sheetNames: string[]): Promise<Record<string, any[]>> {
   if (isDemoMode()) {
     console.log('📝 Demo mode: Loading data from localStorage');
     return Promise.resolve(fetchDemoData(sheetNames));
   } else {
-    console.log('☁️ Real mode: Loading data from Google Sheets');
-    return fetchRealGameData(sheetNames);
+    console.log('☁️ Authenticated mode: Loading data from Google Sheets');
+    return fetchAuthenticatedGameData(sheetNames);
   }
 }
 
@@ -74,8 +180,8 @@ export async function saveGameData(sheetName: string, records: any[]): Promise<a
     console.log('📝 Demo mode: Saving data to localStorage');
     return Promise.resolve(saveDemoData(sheetName, records));
   } else {
-    console.log('☁️ Real mode: Saving data to Google Sheets');
-    return saveRealGameData(sheetName, records);
+    console.log('☁️ Authenticated mode: Saving data to Google Sheets');
+    return saveAuthenticatedGameData(sheetName, records);
   }
 }
 
@@ -91,7 +197,4 @@ export function initializeDemoMode(): void {
 // Helper function to clear demo mode
 export function clearDemoMode(): void {
   localStorage.removeItem('demo-mode-active');
-  // Optionally clear demo data too
-  // localStorage.removeItem('demo-characters');
-  // localStorage.removeItem('demo-character-settings');
 }

@@ -48,14 +48,12 @@ def flatten_dict(nested_dict, delimiter='.'):
     _flatten(nested_dict)
     return result
 
-def fetch_game_data(sheet_names: list[str]):
-    service = get_sheets_service()
-    sheet = service.spreadsheets()
-
+def _fetch_game_data_impl(sheet_service, sheet_names: list[str]):
+    """Implementation that works with any sheets service"""
     response_data = {}
 
     for s in sheet_names:
-        data = sheet.values().get(
+        data = sheet_service.spreadsheets().values().get(
             spreadsheetId=SPREADSHEET_ID,
             range=s
         ).execute()
@@ -93,12 +91,10 @@ def fetch_game_data(sheet_names: list[str]):
 
     return response_data
 
-def write_game_data(sheet_name: str, records: list[dict]):
-    service = get_sheets_service()
-    sheet = service.spreadsheets()
-
+def _write_game_data_impl(sheet_service, sheet_name: str, records: list[dict]):
+    """Implementation that works with any sheets service"""
     # Read header and type rows like fetch_game_data
-    meta = sheet.values().get(
+    meta = sheet_service.spreadsheets().values().get(
         spreadsheetId=SPREADSHEET_ID,
         range=f"{sheet_name}!A1:2"
     ).execute()
@@ -137,7 +133,7 @@ def write_game_data(sheet_name: str, records: list[dict]):
         values.append(row)
 
     # Overwrite the whole sheet starting at A1
-    result = sheet.values().update(
+    result = sheet_service.spreadsheets().values().update(
         spreadsheetId=SPREADSHEET_ID,
         range=f"{sheet_name}!A1",
         valueInputOption="RAW",
@@ -145,3 +141,19 @@ def write_game_data(sheet_name: str, records: list[dict]):
     ).execute()
 
     return result
+
+# Original functions using service account
+def fetch_game_data(sheet_names: list[str]):
+    service = get_sheets_service()
+    return _fetch_game_data_impl(service, sheet_names)
+
+def write_game_data(sheet_name: str, records: list[dict]):
+    service = get_sheets_service()
+    return _write_game_data_impl(service, sheet_name, records)
+
+# New functions that accept an authenticated service
+def fetch_game_data_with_service(sheet_service, sheet_names: list[str]):
+    return _fetch_game_data_impl(sheet_service, sheet_names)
+
+def write_game_data_with_service(sheet_service, sheet_name: str, records: list[dict]):
+    return _write_game_data_impl(sheet_service, sheet_name, records)
