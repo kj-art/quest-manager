@@ -7,6 +7,8 @@ import { Splash } from './components/splash/Splash';
 import { CharacterProvider } from './contexts/CharacterContext';
 import { CharacterSettingsProvider } from './contexts/CharacterSettingsContext';
 import { UIProvider } from './contexts/UIContext';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import { LoginScreen } from './components/auth/LoginScreen';
 import { SaveStatus } from './components/common/SaveStatus';
 import './components/common/SaveStatus.css';
 
@@ -144,6 +146,7 @@ function HeadingText({ slug, headingText }: { slug: string; headingText: String 
 function Header()
 {
   const location = useLocation();
+  const { logout, user } = useAuth();
   const slug = location.pathname.slice(1); // remove leading '/'
   const headingText = slug ? formatDisplayName(slug) : 'Main';
 
@@ -160,13 +163,20 @@ function Header()
             <Link to={`/${slug}`}>{title}</Link>
           </span>
         ))}
+        {user && (
+          <span>
+            <button onClick={logout} style={{ background: 'none', border: 'none', color: 'inherit', cursor: 'pointer' }}>
+              Logout ({user.isDemo ? 'Demo' : user.name})
+            </button>
+          </span>
+        )}
       </nav>
     </div>
   );
 }
 
-// App with dynamic routing
-export default function App()
+// Main app content that requires authentication
+function AuthenticatedApp()
 {
   return (
     <CharacterSettingsProvider>
@@ -181,5 +191,43 @@ export default function App()
         </Routes>
       </CharacterProvider>
     </CharacterSettingsProvider>
+  );
+}
+
+// App wrapper that handles authentication state
+function AppContent()
+{
+  const { user, isLoading } = useAuth();
+
+  if (isLoading)
+  {
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        fontSize: '1.5rem'
+      }}>
+        Loading...
+      </div>
+    );
+  }
+
+  if (!user)
+  {
+    return <LoginScreen />;
+  }
+
+  return <AuthenticatedApp />;
+}
+
+// Main App component with providers
+export default function App()
+{
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 }
