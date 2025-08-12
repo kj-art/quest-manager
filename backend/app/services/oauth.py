@@ -8,10 +8,10 @@ import requests
 from typing import Dict, Any
 
 class GoogleOAuthService:
-    def __init__(self):
+    def __init__(self, redirect_uri: str):
         self.client_id = os.getenv('GOOGLE_OAUTH_CLIENT_ID')
         self.client_secret = os.getenv('GOOGLE_OAUTH_CLIENT_SECRET')
-        self.redirect_uri = 'http://localhost:8000/auth/callback'
+        self.redirect_uri = f'http://localhost:8000{redirect_uri}'
         self.scopes = [
             'https://www.googleapis.com/auth/spreadsheets',
             'https://www.googleapis.com/auth/userinfo.email',

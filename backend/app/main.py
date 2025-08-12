@@ -18,7 +18,8 @@ app.add_middleware(
 )
 
 # Initialize OAuth service
-oauth_service = GoogleOAuthService()
+AUTH_CALLBACK = "/auth/callback"
+oauth_service = GoogleOAuthService(AUTH_CALLBACK)
 
 @app.get("/api/data")
 def get_data(request: Request, sheets: List[str] = Query()):
@@ -92,7 +93,7 @@ def initiate_google_login():
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to generate auth URL: {str(e)}")
 
-@app.get("/auth/callback")
+@app.get(AUTH_CALLBACK)
 def google_callback(request: Request, code: str = None, error: str = None, state: str = None):
     """Handle Google OAuth callback"""
     
